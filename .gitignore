@@ -1,0 +1,12 @@
+*~
+*.bak
+*.swp
+*.pyc
+*.log
+*.*~
+*.pem
+*.key
+*.asc
+*.gpg
+.gnupg/
+*.crt

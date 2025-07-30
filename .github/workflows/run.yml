@@ -1,0 +1,80 @@
+#SPDX-FileCopyrightText: 2025 Intevation GmbH
+#SPDX-License-Identifier: AGPL-3.0-or-later
+#
+name: "CSAF Provider"
+on:
+  push:
+  pull_request:
+
+#inputs:
+#  csaf_version:
+#    description: The version of the gocsaf/csaf tool suite
+#    default: 3.3.0
+#    required: false
+#  secvisogram_version:
+#    description: Version of the secvisogram validator service
+#    default: 2.0.7
+#    required: false
+
+env:
+  csaf_version: 3.3.0
+  secvisogram_version: 2.0.7
+
+jobs:
+  unittests:
+    runs-on: ubuntu-22.04
+    name: Create CSAF documents
+    strategy:
+      fail-fast: false
+
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install nginx and node
+      run: |
+        DEBIAN_FRONTEND=noninteractive sudo -E apt-get update -qq
+        # npm and hunspell for secvisogram
+        DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y nginx fcgiwrap npm hunspell wait-for-it
+
+    - name: Setup nginx
+      run: |
+        sudo cp nginx/fcgiwrap.conf /etc/nginx/fcgiwrap.conf
+        sudo cp nginx/default.conf /etc/nginx/sites-enabled/default
+        sudo chgrp -R www-data /var/www/
+        sudo chmod -R g+w /var/www/
+        sudo systemctl start fcgiwrap.service
+        sudo systemctl start fcgiwrap.socket
+        sudo systemctl reload-or-restart nginx.service
+        wait-for-it localhost:80
+
+    - name: Get CSAF tools
+      run: |
+        wget https://github.com/gocsaf/csaf/releases/download/v${{ env.csaf_version }}/csaf-${{ env.csaf_version }}-gnulinux-amd64.tar.gz
+        tar -xzf csaf-${{ env.csaf_version }}-gnulinux-amd64.tar.gz
+
+    - name: Install secvisogram
+      run: |
+        wget https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${{ env.secvisogram_version }}.tar.gz -O secvisogram-csaf-validator-service-${{ env.secvisogram_version }}.tar.gz
+        tar -xzf secvisogram-csaf-validator-service-${{ env.secvisogram_version }}.tar.gz
+
+    - name: Setup csaf_provider
+      run: |
+        sudo mkdir /etc/csaf/
+        sudo cp csaf_provider/config.toml /etc/csaf/config.toml
+        sudo chgrp www-data /etc/csaf/config.toml
+        sudo chmod g+r,o-rwx /etc/csaf/config.toml
+        sudo mkdir -p /usr/lib/cgi-bin/
+        sudo cp csaf-${{ env.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_provider /usr/lib/cgi-bin/csaf_provider.go
+        ./csaf-${{ env.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
+
+    - name: Setup secvisogram
+      run: |
+        pushd csaf-validator-service-${{ env.secvisogram_version }}
+        npm ci
+        nohup npm run dev < /dev/null &> secvisogram.log &
+        secvisogram_pid=$!
+        popd
+        echo $secvisogram_pid > secvisogram.pid
+        wait-for-it localhost:8082
