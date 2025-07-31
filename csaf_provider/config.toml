@@ -10,10 +10,10 @@ password = "password"
 #openpgp_private_key = "/etc/csaf/openpgp_private.asc"
 
 # Specify the root folder.
-folder = "output"
+folder = "/var/www/"
 
 # Specify the web folder.
-web = "output/html"
+web = "/var/www/html"
 
 # Allow sending a signature with the request.
 # An additional input-field in the web interface will be shown
@@ -35,7 +35,7 @@ certificate_and_password = false
 
 # Make the provider skip the validation of the uploaded CSAF document
 # against the JSON schema.
-no_validation = true
+no_validation = false
 
 # Disable the experimental web interface.
 no_web_ui = true
@@ -82,10 +82,10 @@ create_service_document = true
 # Make the provider use a remote validator service. Not used by default.
 # This example provides an overview over the syntax,
 # adjust the parameters depending on your setup.
-#[remote_validator]
-#url = "http://localhost:8082"
-#presets = ["mandatory"]
-#cache = "/var/lib/csaf/validations.db"
+[remote_validator]
+url = "http://localhost:8082"
+presets = ["mandatory"]
+cache = "/var/lib/csaf/validations.db"
 
 [provider_metadata]
 # Indicate that aggregators can list us.

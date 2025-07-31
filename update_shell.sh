@@ -3,7 +3,7 @@
 echo -e '#!/bin/bash\n' >| commands.sh
 
 # environment variables
-yq -r '.env' .github/workflows/run.yml | grep : | sed -r 's/^ *"?([a-zA-Z0-9_.-]+)"?: "?([^,"]+)"?,?/\1=\2/' >> commands.sh
+yq -r '.env' .github/workflows/run.yml | grep : | sed -r 's/^ *"?([a-zA-Z0-9_.-]+)"?: "?([^,"]+)"?,?/\1="\2"/' >> commands.sh
 
 echo >> commands.sh
 
