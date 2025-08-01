@@ -1,0 +1,24 @@
+{
+  "feed": {
+    "id": "csaf-feed-tlp-green",
+    "title": "CSAF feed (TLP:GREEN)",
+    "link": [
+      {
+        "rel": "self",
+        "href": "https://_/.well-known/csaf/green/csaf-feed-tlp-green.json"
+      },
+      {
+        "rel": "service",
+        "href": "https://_/.well-known/csaf/service.json"
+      }
+    ],
+    "category": [
+      {
+        "scheme": "urn:ietf:params:rolie:category:information-type",
+        "term": "csaf"
+      }
+    ],
+    "updated": "2025-08-01T10:34:38Z",
+    "entry": []
+  }
+}

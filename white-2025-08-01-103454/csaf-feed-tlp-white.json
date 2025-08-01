@@ -1,0 +1,57 @@
+{
+  "feed": {
+    "id": "csaf-feed-tlp-white",
+    "title": "CSAF feed (TLP:WHITE)",
+    "link": [
+      {
+        "rel": "self",
+        "href": "https://_/.well-known/csaf/white/csaf-feed-tlp-white.json"
+      },
+      {
+        "rel": "service",
+        "href": "https://_/.well-known/csaf/service.json"
+      }
+    ],
+    "category": [
+      {
+        "scheme": "urn:ietf:params:rolie:category:information-type",
+        "term": "csaf"
+      }
+    ],
+    "updated": "2025-08-01T10:34:54Z",
+    "entry": [
+      {
+        "id": "example-company-2025-0001",
+        "title": "This is just a valid CSAF document",
+        "link": [
+          {
+            "rel": "self",
+            "href": "https://_/.well-known/csaf/white/2025/example-company-2025-0001.json"
+          },
+          {
+            "rel": "hash",
+            "href": "https://_/.well-known/csaf/white/2025/example-company-2025-0001.json.sha256"
+          },
+          {
+            "rel": "hash",
+            "href": "https://_/.well-known/csaf/white/2025/example-company-2025-0001.json.sha512"
+          },
+          {
+            "rel": "signature",
+            "href": "https://_/.well-known/csaf/white/2025/example-company-2025-0001.json.asc"
+          }
+        ],
+        "published": "2025-07-31T12:00:00Z",
+        "updated": "2025-07-31T12:00:00Z",
+        "content": {
+          "type": "application/json",
+          "src": "https://_/.well-known/csaf/white/2025/example-company-2025-0001.json"
+        },
+        "format": {
+          "schema": "https://docs.oasis-open.org/csaf/csaf/v2.0/csaf_json_schema.json",
+          "version": "2.0"
+        }
+      }
+    ]
+  }
+}
