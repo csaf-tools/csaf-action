@@ -52,6 +52,10 @@
     {
       "fingerprint": "E2AFDBD5D865F00770E0FBD4D0B846E641F3FE9E",
       "url": "https://_/.well-known/csaf/openpgp/E2AFDBD5D865F00770E0FBD4D0B846E641F3FE9E.asc"
+    },
+    {
+      "fingerprint": "8D50510D7E66662935037C660D0627EAE7F58696",
+      "url": "https://_/.well-known/csaf/openpgp/8D50510D7E66662935037C660D0627EAE7F58696.asc"
     }
   ],
   "publisher": {
