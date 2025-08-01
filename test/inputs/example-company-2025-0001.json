@@ -1,0 +1,83 @@
+{
+  "document": {
+    "category": "csaf_vex",
+    "csaf_version": "2.0",
+    "distribution": {
+      "tlp": {
+        "label": "WHITE",
+        "url": "https://www.first.org/tlp/v1/"
+      }
+    },
+    "lang": "en",
+    "publisher": {
+      "category": "vendor",
+      "contact_details": "Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact.",
+      "name": "Example Company",
+      "namespace": "https://example.com"
+    },
+    "title": "This is just a valid CSAF document",
+    "tracking": {
+      "current_release_date": "2025-07-31T12:00:00.000Z",
+      "id": "example-company-2025-0001",
+      "initial_release_date": "2025-07-31T12:00:00.000Z",
+      "revision_history": [
+        {
+          "date": "2025-07-31T12:00:00.000Z",
+          "number": "1.0.0",
+          "summary": "Initial revision"
+        }
+      ],
+      "status": "final",
+      "version": "1.0.0"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "branches": [
+          {
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "vers:all/*",
+                "product": {
+                  "name": "All versions",
+                  "product_id": "example-product"
+                }
+              }
+            ],
+            "category": "product_name",
+            "name": "Example product"
+          }
+        ],
+        "category": "vendor",
+        "name": "Example Company"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2025-0000",
+      "notes": [
+        {
+          "category": "summary",
+          "text": "nothing here"
+        }
+      ],
+      "product_status": {
+        "under_investigation": [
+          "example-product"
+        ]
+      },
+      "threats": [
+        {
+          "category": "impact",
+          "details": "No idea",
+          "product_ids": [
+            "example-product"
+          ]
+        }
+      ]
+    }
+  ]
+}

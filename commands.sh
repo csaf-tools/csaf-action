@@ -7,6 +7,21 @@ publisher_name="Example Company"
 publisher_namespace="https://example.com"
 publisher_issuing_authority="We at Example Company are responsible for publishing and maintaining Product Y."
 publisher_contact_details="Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact."
+source_csaf_documents="test/inputs/"
+
+# inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
+git config --global user.name "github-actions[bot]"
+git config --global user.email "github-actions[bot]@users.noreply.github.com"
+gh_pages_exists=$(git ls-remote --heads origin gh-pages)
+if [[ -z "$gh_pages_exists" ]]; then
+  echo "Create branch gh-pages"
+  previous_branch=$(git rev-parse --abbrev-ref HEAD)
+  git checkout --orphan gh-pages  # empty branch
+  git reset --hard  # remove any files
+  git commit --allow-empty --message "Create empty branch gh-pages"
+  git push origin gh-pages
+  git checkout "$previous_branch"
+fi
 
 DEBIAN_FRONTEND=noninteractive sudo -E apt-get update -qq
 # npm and hunspell for secvisogram
@@ -52,12 +67,13 @@ sudo mkdir -p /var/lib/csaf/
 sudo cp csaf_provider/config.toml /etc/csaf/config.toml
 sudo chgrp www-data /etc/csaf/config.toml
 sudo chmod g+r,o-rwx /etc/csaf/config.toml
-output_folder="$(pwd)/csaf_advisories"
-mkdir -p $output_folder
+output_folder="$(pwd)/gh-pages/"
+sudo mkdir -p $output_folder
 sudo chgrp -R www-data $output_folder /var/lib/csaf/
 sudo chmod -R g+rw $output_folder /var/lib/csaf/
+# make all parents of $output_folder accessable to www-data
 i=$output_folder
-while [[ $i != /home ]]; do chmod o+rx "$i"; i=$(dirname "$i"); done;
+while [[ $i != /home ]]; do sudo chmod o+rx "$i"; i=$(dirname "$i"); done
 sudo sed -ri -e "s#^folder ?=.*#folder = \"$output_folder\"#" -e "s#^web ?=.*#web = \"$output_folder/html\"#" /etc/csaf/config.toml
 sudo sed -ri -e "s#^category ?=.*#category = \"$publisher_category\"#" \
   -e "s#^name ?=.*#name = \"$publisher_name\"#" \
@@ -78,4 +94,9 @@ secvisogram_pid=$!
 popd
 echo $secvisogram_pid > secvisogram.pid
 wait-for-it localhost:8082
+
+find $source_csaf_documents -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
+  echo "Uploading $file"
+  ./csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
+done
 
