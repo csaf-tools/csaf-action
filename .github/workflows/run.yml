@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  unittests:
-    runs-on: ubuntu-22.04
+  csaf:
+    runs-on: ubuntu-24.04
     name: Create CSAF documents
     strategy:
       fail-fast: false

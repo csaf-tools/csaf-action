@@ -52,10 +52,10 @@ inputs:
     default: 4096
     required: false
   openpgp_secret_key:
-    description: The armored OpenPGP secret key is provided as GitHub secret
+    description: The armored OpenPGP secret key, provided as GitHub secret
     required: false
   openpgp_key:
-    description: The armored OpenPGP public key is provided as GitHub secret
+    description: The armored OpenPGP public key, provided as GitHub secret
     required: false
 
 runs:

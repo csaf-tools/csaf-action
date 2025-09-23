@@ -1,0 +1,77 @@
+# GitHub CSAF Advisory Action
+Publish your CSAF Advisories from a GitHub Repository to GitHub pages.
+
+*Validating, signing & publishing [CSAF](https://docs.oasis-open.org/csaf/csaf/v2.0/csaf-v2.0.html) security advisories.*
+
+## What does it do?
+
+The CSAF Action does
+
+* validate all your CSAF advisories
+* create a CSAF provider with it
+* sign the documents them optionally with your OpenPGP key
+* publish the result with GitHub Pages to `https://<org>.github.io/<repo>/`.
+
+Internally, it
+
+- creates a branch `gh-pages` if it does not yet exists
+- configures and sets up a `csaf_provider` of the CSAF Tools using nginx, go and fcgiwrap.
+- sets up a secvisogram validator service with npm and hunspell
+- upload the CSAF advisories to the local CSAF provider
+- commit the documents to the branch `gh-pages`
+
+## Workflow file
+
+```yaml
+name: Validate & publish CSAF advisories
+on:
+  push:
+    paths:
+      - 'advisories/**.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  csaf:
+    runs-on: ubuntu-24.04
+    name: Create CSAF documents
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Publish CSAF advisories
+      uses: wagner-intevation/csaf-action@main
+      with:
+        publisher_name: Example Test Company
+        publisher_namespace: https://test.example.com
+        publisher_issuing_authority: "We at Example Test Company are responsible for publishing and maintaining Product Test."
+        publisher_contact_details: "Example Test Company can be reached at contact_us@example.com or via our website at https://test.example.com/contact."
+        source_csaf_documents: advisories/
+        openpgp_secret_key: ${{ secrets.CSAF_OPENPGP_SECRET_KEY }}
+        openpgp_key: ${{ secrets.CSAF_OPENPGP_KEY }}
+```
+
+## Input parameters
+
+| Name | Required | Default | Description |
+|------|----------|---------|-------------|
+| `source_csaf_documents` | No | `csaf_documents/` | Directory to the Source CSAF Advisory JSON files. |
+| `csaf_version` | No | `3.3.0` | The version of the gocsaf/csaf tool suite. |
+| `secvisogram_version` | No | `2.0.7` | Version of the secvisogram validator service. |
+| `publisher_category` | No | `vendor` | The category of the CSAF Publisher. |
+| `publisher_name` | Yes | - | Name of the CSAF Publisher. |
+| `publisher_namespace` | Yes | - | URL of the CSAF Publisher. |
+| `publisher_issuing_authority` | Yes | - | Description of the Issuing Authority of the CSAF Publisher. |
+| `publisher_contact_details` | Yes | - | Contact details of the CSAF Publisher. |
+| `openpgp_key_email_address` | No | `csaf@example.invalid` | If the OpenPGP is to be generated on the fly, this is the associated e-mail address. |
+| `openpgp_key_real_name` | No | `Example CSAF Publisher` | If the OpenPGP is to be generated on the fly, this is the associated real name. |
+| `openpgp_key_type` | No | `RSA` | If the OpenPGP is to be generated on the fly, this is the key type. |
+| `openpgp_key_length` | No | `4096` | If the OpenPGP is to be generated on the fly, this is the key length in bits. |
+| `openpgp_secret_key` | No | - | The armored OpenPGP secret key, provided as GitHub secret. |
+| `openpgp_key` | No | - | The armored OpenPGP public key, provided as GitHub secret. |
+
+## License
+
+FIXME
