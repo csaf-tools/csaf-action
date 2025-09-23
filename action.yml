@@ -35,6 +35,28 @@ inputs:
     description: Path to the CSAF source documents
     default: csaf_documents/
     required: false
+  openpgp_key_email_address:
+    description: If the OpenPGP is to be generated on the fly, this is the associated e-mail address
+    default: csaf@example.invalid
+    required: false
+  openpgp_key_real_name:
+    description: If the OpenPGP is to be generated on the fly, this is the associated real name
+    default: Example CSAF Publisher
+    required: false
+  openpgp_key_type:
+    description: If the OpenPGP is to be generated on the fly, this is the key type
+    default: RSA
+    required: false
+  openpgp_key_length:
+    description: If the OpenPGP is to be generated on the fly, this is the key length in bits
+    default: 4096
+    required: false
+  openpgp_secret_key:
+    description: The armored OpenPGP secret key is provided as GitHub secret
+    required: false
+  openpgp_key:
+    description: The armored OpenPGP public key is provided as GitHub secret
+    required: false
 
 runs:
   using: composite
@@ -97,31 +119,34 @@ runs:
         wget https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${{ inputs.secvisogram_version }}.tar.gz -O secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz
         tar -xzf secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz
 
-    - name: Create OpenPGP key
+    - name: Create or process OpenPGP key
       shell: bash
-      # TODO: replace by a secret
       run: |
-        # based on https://serverfault.com/a/960673/217116
-        cat >keydetails <<EOF
-            Key-Type: RSA
-            Key-Length: 4096
-            Subkey-Type: RSA
-            Subkey-Length: 4096
-            Name-Real: CSAF Advisory Test
-            Name-Comment: CSAF Advisory Test
-            Name-Email: noreply@example.com
-            Expire-Date: 0
-            %no-ask-passphrase
-            %no-protection
-            %commit
-        EOF
-        gpg --batch --gen-key keydetails
-        # check if the key works
-        echo foobar | gpg -e -a -r noreply@example.com
-        # save at expexted destinations
         sudo mkdir -p /etc/csaf/
-        gpg --armor --export noreply@example.com | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
-        gpg --armor --export-secret-keys noreply@example.com | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
+        if [[ -z "${{ inputs.openpgp_key }}" || -z "${{ inputs.openpgp_secret_key }}" ]]; then
+          # based on https://serverfault.com/a/960673/217116
+          cat >keydetails <<EOF
+              Key-Type: ${{ inputs.openpgp_key_type }}
+              Key-Length: ${{ inputs.openpgp_key_length }}
+              Subkey-Type: ${{ inputs.openpgp_key_type }}
+              Subkey-Length: ${{ inputs.openpgp_key_length }}
+              Name-Real: ${{ inputs.openpgp_key_real_name }}
+              Name-Email: ${{ inputs.openpgp_key_email_address }}
+              Expire-Date: 0
+              %no-ask-passphrase
+              %no-protection
+              %commit
+        EOF
+          gpg --batch --gen-key keydetails
+          # check if the key works
+          echo foobar | gpg -e -a -r ${{ inputs.openpgp_key_email_address }}
+          # save at expexted destinations
+          gpg --armor --export ${{ inputs.openpgp_key_email_address }} | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+          gpg --armor --export-secret-keys ${{ inputs.openpgp_key_email_address }} | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
+        else
+          echo "${{ inputs.openpgp_key }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+          echo "${{ inputs.openpgp_secret_key }}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
+        fi
 
     - name: Configure csaf_provider
       shell: bash
