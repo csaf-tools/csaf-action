@@ -42,10 +42,7 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        sparse-checkout: |
-          ${{ inputs.source_csaf_documents }}
-          nginx
-          csaf_provider
+        sparse-checkout: ${{ inputs.source_csaf_documents }}
 
     - name: Configure git
       shell: bash
@@ -81,8 +78,8 @@ runs:
     - name: Setup nginx
       shell: bash
       run: |
-        sudo cp nginx/fcgiwrap.conf /etc/nginx/fcgiwrap.conf
-        sudo cp nginx/default.conf /etc/nginx/sites-enabled/default
+        sudo cp "${{ github.action_path }}/nginx/fcgiwrap.conf" /etc/nginx/fcgiwrap.conf
+        sudo cp "${{ github.action_path }}/nginx/default.conf" /etc/nginx/sites-enabled/default
         sudo systemctl start fcgiwrap.service
         sudo systemctl start fcgiwrap.socket
         sudo systemctl reload-or-restart nginx.service
@@ -131,7 +128,7 @@ runs:
       run: |
         # for validations.db
         sudo mkdir -p /var/lib/csaf/
-        sudo cp csaf_provider/config.toml /etc/csaf/config.toml
+        sudo cp "${{ github.action_path }}/csaf_provider/config.toml" /etc/csaf/config.toml
         sudo chgrp www-data /etc/csaf/config.toml
         sudo chmod g+r,o-rwx /etc/csaf/config.toml
         output_folder="$(pwd)/gh-pages/"
