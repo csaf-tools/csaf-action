@@ -1,13 +1,5 @@
 #!/bin/bash
 
-csaf_version="3.3.0"
-secvisogram_version="2.0.7"
-publisher_category="vendor"
-publisher_name="Example Company"
-publisher_namespace="https://example.com"
-publisher_issuing_authority="We at Example Company are responsible for publishing and maintaining Product Y."
-publisher_contact_details="Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact."
-source_csaf_documents="test/inputs/"
 
 # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
 git config --global user.name "github-actions[bot]"
@@ -34,11 +26,11 @@ sudo systemctl start fcgiwrap.socket
 sudo systemctl reload-or-restart nginx.service
 wait-for-it localhost:80
 
-wget https://github.com/gocsaf/csaf/releases/download/v$csaf_version/csaf-$csaf_version-gnulinux-amd64.tar.gz
-tar -xzf csaf-$csaf_version-gnulinux-amd64.tar.gz
+wget https://github.com/gocsaf/csaf/releases/download/v${{ inputs.csaf_version }}/csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz
+tar -xzf csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz
 
-wget https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v$secvisogram_version.tar.gz -O secvisogram-csaf-validator-service-$secvisogram_version.tar.gz
-tar -xzf secvisogram-csaf-validator-service-$secvisogram_version.tar.gz
+wget https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${{ inputs.secvisogram_version }}.tar.gz -O secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz
+tar -xzf secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz
 
 # based on https://serverfault.com/a/960673/217116
 cat >keydetails <<EOF
@@ -75,19 +67,19 @@ sudo chmod -R g+rw $output_folder /var/lib/csaf/
 i=$output_folder
 while [[ $i != /home ]]; do sudo chmod o+rx "$i"; i=$(dirname "$i"); done
 sudo sed -ri -e "s#^folder ?=.*#folder = \"$output_folder\"#" -e "s#^web ?=.*#web = \"$output_folder/html\"#" /etc/csaf/config.toml
-sudo sed -ri -e "s#^category ?=.*#category = \"$publisher_category\"#" \
-  -e "s#^name ?=.*#name = \"$publisher_name\"#" \
-  -e "s#^namespace ?=.*#namespace = \"$publisher_namespace\"#" \
-  -e "s#^issuing_authority ?=.*#issuing_authority = \"$publisher_issuing_authority\"#" \
-  -e "s#^contact_details ?=.*#contact_details = \"$publisher_contact_details\"#" \
+sudo sed -ri -e "s#^category ?=.*#category = \"${{ inputs.publisher_category }}\"#" \
+  -e "s#^name ?=.*#name = \"${{ inputs.publisher_name }}\"#" \
+  -e "s#^namespace ?=.*#namespace = \"${{ inputs.publisher_namespace }}\"#" \
+  -e "s#^issuing_authority ?=.*#issuing_authority = \"${{ inputs.publisher_issuing_authority }}\"#" \
+  -e "s#^contact_details ?=.*#contact_details = \"${{ inputs.publisher_contact_details }}\"#" \
   /etc/csaf/config.toml
 sudo mkdir -p /usr/lib/cgi-bin/
-sudo cp csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_provider /usr/lib/cgi-bin/csaf_provider.go
+sudo cp csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_provider /usr/lib/cgi-bin/csaf_provider.go
 curl -f http://127.0.0.1/cgi-bin/csaf_provider.go/api/create  -H 'X-Csaf-Provider-Auth: $2a$10$QL0Qy7CeOSdWDrdw6huw0uFk2szqxMssoihVn64BbZEPzqXwPThgu'
 # has no proper exit codes currently: https://github.com/gocsaf/csaf/issues/669
-# ./csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
+# ./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
 
-pushd csaf-validator-service-$secvisogram_version
+pushd csaf-validator-service-${{ inputs.secvisogram_version }}
 npm ci
 nohup npm run dev < /dev/null &> secvisogram.log &
 secvisogram_pid=$!
@@ -95,8 +87,8 @@ popd
 echo $secvisogram_pid > secvisogram.pid
 wait-for-it localhost:8082
 
-find $source_csaf_documents -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
+find ${{ inputs.source_csaf_documents }} -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
   echo "Uploading $file"
-  ./csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
+  ./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
 done
 
