@@ -64,6 +64,10 @@
     {
       "fingerprint": "0636A4A470C4A059990710941EC9FCC6E421B5D1",
       "url": "https://_/.well-known/csaf/openpgp/0636A4A470C4A059990710941EC9FCC6E421B5D1.asc"
+    },
+    {
+      "fingerprint": "51AF8BBB987E6A84193A6EB9C353C1D6EF643324",
+      "url": "https://_/.well-known/csaf/openpgp/51AF8BBB987E6A84193A6EB9C353C1D6EF643324.asc"
     }
   ],
   "publisher": {
