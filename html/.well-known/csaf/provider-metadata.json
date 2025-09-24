@@ -104,6 +104,10 @@
     {
       "fingerprint": "9AADBC5736D940E992ECD75C81D84FEE18BCD2F1",
       "url": "https://_/.well-known/csaf/openpgp/9AADBC5736D940E992ECD75C81D84FEE18BCD2F1.asc"
+    },
+    {
+      "fingerprint": "2746841C54B85A62F5C4BCC423A0C6EFA6769BA4",
+      "url": "https://_/.well-known/csaf/openpgp/2746841C54B85A62F5C4BCC423A0C6EFA6769BA4.asc"
     }
   ],
   "publisher": {
