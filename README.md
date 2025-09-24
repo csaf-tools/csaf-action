@@ -33,6 +33,8 @@ Internally, it
 name: Validate & publish CSAF advisories
 on:
   push:
+    branches:
+      - main
     paths:
       - 'advisories/**.json'
   workflow_dispatch:
