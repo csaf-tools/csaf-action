@@ -88,6 +88,10 @@
     {
       "fingerprint": "E5B474A17C9FE60E57913379A00058A7D448C7B2",
       "url": "https://_/.well-known/csaf/openpgp/E5B474A17C9FE60E57913379A00058A7D448C7B2.asc"
+    },
+    {
+      "fingerprint": "7F60FF2755B7D0E96B53F0E2E93BAACE1B04F4A8",
+      "url": "https://_/.well-known/csaf/openpgp/7F60FF2755B7D0E96B53F0E2E93BAACE1B04F4A8.asc"
     }
   ],
   "publisher": {
