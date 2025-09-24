@@ -1,0 +1,61 @@
+{
+  "canonical_url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/provider-metadata.json",
+  "distributions": [
+    {
+      "rolie": {
+        "feeds": [
+          {
+            "summary": "TLP:WHITE advisories",
+            "tlp_label": "WHITE",
+            "url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/white/csaf-feed-tlp-white.json"
+          },
+          {
+            "summary": "TLP:GREEN advisories",
+            "tlp_label": "GREEN",
+            "url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/green/csaf-feed-tlp-green.json"
+          },
+          {
+            "summary": "TLP:AMBER advisories",
+            "tlp_label": "AMBER",
+            "url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/amber/csaf-feed-tlp-amber.json"
+          },
+          {
+            "summary": "TLP:RED advisories",
+            "tlp_label": "RED",
+            "url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/red/csaf-feed-tlp-red.json"
+          }
+        ]
+      }
+    },
+    {
+      "directory_url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/white"
+    },
+    {
+      "directory_url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/green"
+    },
+    {
+      "directory_url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/amber"
+    },
+    {
+      "directory_url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/red"
+    }
+  ],
+  "last_updated": "2025-09-24T19:20:06Z",
+  "list_on_CSAF_aggregators": true,
+  "metadata_version": "2.0",
+  "mirror_on_CSAF_aggregators": true,
+  "public_openpgp_keys": [
+    {
+      "fingerprint": "96A82218EF37C596F25EB302CC99AA12B8823E50",
+      "url": "https://wagner-intevation.github.io/csaf-action//.well-known/csaf/openpgp/96A82218EF37C596F25EB302CC99AA12B8823E50.asc"
+    }
+  ],
+  "publisher": {
+    "category": "vendor",
+    "name": "Example Company",
+    "namespace": "https://example.com",
+    "contact_details": "Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact.",
+    "issuing_authority": "We at Example Company are responsible for publishing and maintaining Product Y."
+  },
+  "role": "csaf_trusted_provider"
+}
