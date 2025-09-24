@@ -98,7 +98,7 @@ runs:
       run: |
         url=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
         echo "$url"
-        echo "url=${url}html" >> $GITHUB_OUTPUT
+        echo "url=${url}html" >> "$GITHUB_OUTPUT"
 
     - name: Install nginx and node
       shell: bash
@@ -120,14 +120,14 @@ runs:
     - name: Get CSAF tools
       shell: bash
       run: |
-        wget https://github.com/gocsaf/csaf/releases/download/v${{ inputs.csaf_version }}/csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz
-        tar -xzf csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz
+        wget "https://github.com/gocsaf/csaf/releases/download/v${{ inputs.csaf_version }}/csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz"
+        tar -xzf "csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz"
 
     - name: Install secvisogram
       shell: bash
       run: |
-        wget https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${{ inputs.secvisogram_version }}.tar.gz -O secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz
-        tar -xzf secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz
+        wget "https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${{ inputs.secvisogram_version }}.tar.gz" -O "secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz"
+        tar -xzf "secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz"
 
     - name: Create or process OpenPGP key
       shell: bash
@@ -149,10 +149,10 @@ runs:
         EOF
           gpg --batch --gen-key keydetails
           # check if the key works
-          echo foobar | gpg -e -a -r ${{ inputs.openpgp_key_email_address }}
+          echo foobar | gpg -e -a -r "${{ inputs.openpgp_key_email_address }}"
           # save at expected destinations
-          gpg --armor --export ${{ inputs.openpgp_key_email_address }} | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
-          gpg --armor --export-secret-keys ${{ inputs.openpgp_key_email_address }} | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
+          gpg --armor --export "${{ inputs.openpgp_key_email_address }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+          gpg --armor --export-secret-keys "${{ inputs.openpgp_key_email_address }}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
         else
           echo "${{ inputs.openpgp_key }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
           echo "${{ inputs.openpgp_secret_key }}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
@@ -167,12 +167,12 @@ runs:
         sudo chgrp www-data /etc/csaf/config.toml
         sudo chmod g+r,o-rwx /etc/csaf/config.toml
         output_folder="$(pwd)/gh-pages/"
-        sudo mkdir -p $output_folder
-        sudo chgrp -R www-data $output_folder /var/lib/csaf/
-        sudo chmod -R g+rw $output_folder /var/lib/csaf/
+        sudo mkdir -p "$output_folder"
+        sudo chgrp -R www-data "$output_folder" /var/lib/csaf/
+        sudo chmod -R g+rw "$output_folder" /var/lib/csaf/
         # make all parents of $output_folder accessible to www-data
-        i=$output_folder
-        while [[ $i != /home ]]; do sudo chmod o+rx "$i"; i=$(dirname "$i"); done
+        i="$output_folder"
+        while [[ "$i" != /home ]]; do sudo chmod o+rx "$i"; i="$(dirname "$i")"; done
         sudo sed -ri \
           -e "s#^folder *=.*#folder = \"$output_folder\"#" \
           -e "s#^web *=.*#web = \"$output_folder/html\"#" \
@@ -185,19 +185,19 @@ runs:
           /etc/csaf/config.toml
         sudo cat /etc/csaf/config.toml
         sudo mkdir -p /usr/lib/cgi-bin/
-        sudo cp csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_provider /usr/lib/cgi-bin/csaf_provider.go
+        sudo cp "csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_provider" /usr/lib/cgi-bin/csaf_provider.go
         curl -f http://127.0.0.1/cgi-bin/csaf_provider.go/api/create  -H 'X-Csaf-Provider-Auth: $2a$10$QL0Qy7CeOSdWDrdw6huw0uFk2szqxMssoihVn64BbZEPzqXwPThgu'
         # has no proper exit codes currently: https://github.com/gocsaf/csaf/issues/669
-        # ./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
+        # "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
 
     - name: Setup secvisogram
       shell: bash
       run: |
-        pushd csaf-validator-service-${{ inputs.secvisogram_version }}
+        pushd "csaf-validator-service-${{ inputs.secvisogram_version }}" || exit
         npm ci
         nohup npm run dev < /dev/null &> secvisogram.log &
         secvisogram_pid=$!
-        popd
+        popd || exit
         echo $secvisogram_pid > secvisogram.pid
         wait-for-it localhost:8082
 
@@ -206,11 +206,11 @@ runs:
       run: |
         find ${{ inputs.source_csaf_documents }} -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
           echo "Uploading $file"
-          ./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
+          "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
         done
-        pushd gh-pages
-        ${{ github.action_path }}/pages.sh
-        popd
+        pushd gh-pages || exit
+        "${{ github.action_path }}/pages.sh"
+        popd || exit
 
     - name: Commit changes
       # Use https://github.com/stefanzweifel/git-auto-commit-action for commit and push

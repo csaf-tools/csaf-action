@@ -23,7 +23,7 @@ Internally, it
 
 ## Activate GitHub Pages
 
-1. In your repository, go to Settings > Pages (https://github.com/<owner>/<repository>/settings/pages)
+1. In your repository, go to Settings > Pages (`https://github.com/<owner>/<repository>/settings/pages`)
 2. Build and Deploy from source: *Deploy from a branch*
 3. Branch: *gh-pages* (default)
 
