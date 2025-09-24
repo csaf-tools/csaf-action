@@ -57,7 +57,7 @@ EOF
 gpg --batch --gen-key keydetails
 # check if the key works
 echo foobar | gpg -e -a -r noreply@example.com
-# save at expexted destinations
+# save at expected destinations
 sudo mkdir -p /etc/csaf/
 gpg --armor --export noreply@example.com | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
 gpg --armor --export-secret-keys noreply@example.com | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
@@ -71,7 +71,7 @@ output_folder="$(pwd)/gh-pages/"
 sudo mkdir -p $output_folder
 sudo chgrp -R www-data $output_folder /var/lib/csaf/
 sudo chmod -R g+rw $output_folder /var/lib/csaf/
-# make all parents of $output_folder accessable to www-data
+# make all parents of $output_folder accessible to www-data
 i=$output_folder
 while [[ $i != /home ]]; do sudo chmod o+rx "$i"; i=$(dirname "$i"); done
 sudo sed -ri -e "s#^folder ?=.*#folder = \"$output_folder\"#" -e "s#^web ?=.*#web = \"$output_folder/html\"#" /etc/csaf/config.toml
