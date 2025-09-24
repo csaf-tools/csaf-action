@@ -90,6 +90,16 @@ runs:
         # make a checkout in subdirectory. Not possible in parallel directory
         path: gh-pages
 
+    - name: Get GitHub Pages URL
+      id: pagesurl
+      env:
+        GH_TOKEN: ${{ github.token }}
+      shell: bash
+      run: |
+        url=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
+        echo "$url"
+        echo "url=${url}html" >> $GITHUB_OUTPUT
+
     - name: Install nginx and node
       shell: bash
       run: |
@@ -163,13 +173,17 @@ runs:
         # make all parents of $output_folder accessible to www-data
         i=$output_folder
         while [[ $i != /home ]]; do sudo chmod o+rx "$i"; i=$(dirname "$i"); done
-        sudo sed -ri -e "s#^folder ?=.*#folder = \"$output_folder\"#" -e "s#^web ?=.*#web = \"$output_folder/html\"#" /etc/csaf/config.toml
-        sudo sed -ri -e "s#^category ?=.*#category = \"${{ inputs.publisher_category }}\"#" \
-          -e "s#^name ?=.*#name = \"${{ inputs.publisher_name }}\"#" \
-          -e "s#^namespace ?=.*#namespace = \"${{ inputs.publisher_namespace }}\"#" \
-          -e "s#^issuing_authority ?=.*#issuing_authority = \"${{ inputs.publisher_issuing_authority }}\"#" \
-          -e "s#^contact_details ?=.*#contact_details = \"${{ inputs.publisher_contact_details }}\"#" \
+        sudo sed -ri \
+          -e "s#^folder *=.*#folder = \"$output_folder\"#" \
+          -e "s#^web *=.*#web = \"$output_folder/html\"#" \
+          -e "s#^category *=.*#category = \"${{ inputs.publisher_category }}\"#" \
+          -e "s#^name *=.*#name = \"${{ inputs.publisher_name }}\"#" \
+          -e "s#^namespace *=.*#namespace = \"${{ inputs.publisher_namespace }}\"#" \
+          -e "s#^issuing_authority *=.*#issuing_authority = \"${{ inputs.publisher_issuing_authority }}\"#" \
+          -e "s#^contact_details *=.*#contact_details = \"${{ inputs.publisher_contact_details }}\"#" \
+          -e "s#^\#?canonical_url_prefix *=.*#canonical_url_prefix = \"${{ steps.pagesurl.outputs.url }}\"#" \
           /etc/csaf/config.toml
+        sudo cat /etc/csaf/config.toml
         sudo mkdir -p /usr/lib/cgi-bin/
         sudo cp csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_provider /usr/lib/cgi-bin/csaf_provider.go
         curl -f http://127.0.0.1/cgi-bin/csaf_provider.go/api/create  -H 'X-Csaf-Provider-Auth: $2a$10$QL0Qy7CeOSdWDrdw6huw0uFk2szqxMssoihVn64BbZEPzqXwPThgu'

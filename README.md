@@ -81,6 +81,10 @@ jobs:
 | `openpgp_secret_key` | No | - | The armored OpenPGP secret key, provided as GitHub secret. |
 | `openpgp_key` | No | - | The armored OpenPGP public key, provided as GitHub secret. |
 
+### Changing the URL
+
+When the GitHub Pages URL changes, the file `html/.well-known/csaf/provider-metadata.json` in branch `gh-pages` must be delete to take effect.
+
 ## License
 
 FIXME
