@@ -20,6 +20,7 @@ find . -name .git -prune -o -type d -print0 | while IFS= read -r -d '' dirname; 
     echo "$dirname"
     pushd "$dirname"
     # with `-o index.html` instead of bash redirection: `tree: invalid filename 'index.html'`
-    tree -a -I .git -I index.html --metafirst -h --du -F -D -L 1 -H '' > index.html
+    # tree version 2.1.1 (Ubuntu 24.04) requires -H ., tree version 2.2.1 requires -H ''
+    tree -a -I .git -I index.html --metafirst -h --du -F -D -L 1 -H '.' > index.html
     popd
 done
