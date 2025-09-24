@@ -1,5 +1,5 @@
 # GitHub CSAF Advisory Action
-Publish your CSAF Advisories from a GitHub Repository to GitHub pages.
+Publish your CSAF Advisories from a GitHub repository to GitHub Pages.
 
 *Validating, signing & publishing [CSAF](https://docs.oasis-open.org/csaf/csaf/v2.0/csaf-v2.0.html) security advisories.*
 
@@ -10,15 +10,22 @@ The CSAF Action does
 * validate all your CSAF advisories
 * create a CSAF provider with it
 * sign the documents them optionally with your OpenPGP key
-* publish the result with GitHub Pages to `https://<org>.github.io/<repo>/`.
+* publish the result with GitHub Pages to `https://<woner>.github.io/<repository>/`.
 
 Internally, it
 
 - creates a branch `gh-pages` if it does not yet exists
 - configures and sets up a `csaf_provider` of the CSAF Tools using nginx, go and fcgiwrap.
 - sets up a secvisogram validator service with npm and hunspell
-- upload the CSAF advisories to the local CSAF provider
+- upload the CSAF advisories to the local CSAF provider, generating the file structure and signatures
+- make adjustments for publishing it with GitHub Pages
 - commit the documents to the branch `gh-pages`
+
+## Activate GitHub Pages
+
+1. In your repository, go to Settings > Pages (https://github.com/<owner>/<repository>/settings/pages)
+2. Build and Deploy from source: *Deploy from a branch*
+3. Branch: *gh-pages* (default)
 
 ## Workflow file
 

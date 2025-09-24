@@ -94,8 +94,8 @@ runs:
       shell: bash
       run: |
         DEBIAN_FRONTEND=noninteractive sudo -E apt-get update -qq
-        # npm and hunspell for secvisogram
-        DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y nginx fcgiwrap npm hunspell wait-for-it
+        # npm and hunspell for secvisogram, tree for pages.sh
+        DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y nginx fcgiwrap npm hunspell wait-for-it tree
 
     - name: Setup nginx
       shell: bash
@@ -194,6 +194,9 @@ runs:
           echo "Uploading $file"
           ./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
         done
+        pushd gh-pages
+        ${{ github.action_path }}/pages.sh
+        popd
 
     - name: Commit changes
       # Use https://github.com/stefanzweifel/git-auto-commit-action for commit and push
