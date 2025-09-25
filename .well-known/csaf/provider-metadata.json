@@ -1,5 +1,5 @@
 {
-  "canonical_url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/provider-metadata.json",
+  "canonical_url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/provider-metadata.json",
   "distributions": [
     {
       "rolie": {
@@ -7,47 +7,47 @@
           {
             "summary": "TLP:WHITE advisories",
             "tlp_label": "WHITE",
-            "url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/white/csaf-feed-tlp-white.json"
+            "url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/csaf-feed-tlp-white.json"
           },
           {
             "summary": "TLP:GREEN advisories",
             "tlp_label": "GREEN",
-            "url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/green/csaf-feed-tlp-green.json"
+            "url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/green/csaf-feed-tlp-green.json"
           },
           {
             "summary": "TLP:AMBER advisories",
             "tlp_label": "AMBER",
-            "url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/amber/csaf-feed-tlp-amber.json"
+            "url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/amber/csaf-feed-tlp-amber.json"
           },
           {
             "summary": "TLP:RED advisories",
             "tlp_label": "RED",
-            "url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/red/csaf-feed-tlp-red.json"
+            "url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/red/csaf-feed-tlp-red.json"
           }
         ]
       }
     },
     {
-      "directory_url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/white"
+      "directory_url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white"
     },
     {
-      "directory_url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/green"
+      "directory_url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/green"
     },
     {
-      "directory_url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/amber"
+      "directory_url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/amber"
     },
     {
-      "directory_url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/red"
+      "directory_url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/red"
     }
   ],
-  "last_updated": "2025-09-25T09:19:36Z",
+  "last_updated": "2025-09-25T09:32:00Z",
   "list_on_CSAF_aggregators": true,
   "metadata_version": "2.0",
   "mirror_on_CSAF_aggregators": true,
   "public_openpgp_keys": [
     {
-      "fingerprint": "712049EBE4024F821379FD5A9AFB843E01BBE9B0",
-      "url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/openpgp/712049EBE4024F821379FD5A9AFB843E01BBE9B0.asc"
+      "fingerprint": "331AC13D799A611F3F188A1760FDCF263C761F32",
+      "url": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/openpgp/331AC13D799A611F3F188A1760FDCF263C761F32.asc"
     }
   ],
   "publisher": {
