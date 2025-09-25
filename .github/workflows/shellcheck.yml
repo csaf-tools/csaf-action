@@ -1,0 +1,23 @@
+#SPDX-FileCopyrightText: 2025 Intevation GmbH
+#SPDX-License-Identifier: AGPL-3.0-or-later
+#
+name: "Shellcheck"
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract commands
+        run: ./update_local_execution.sh
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          severity: warning
