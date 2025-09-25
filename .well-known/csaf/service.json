@@ -6,7 +6,7 @@
         "collection": [
           {
             "title": "CSAF feed (TLP:WHITE)",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/csaf-feed-tlp-white.json",
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/csaf-feed-tlp-white.json",
             "categories": {
               "category": [
                 {
@@ -18,7 +18,7 @@
           },
           {
             "title": "CSAF feed (TLP:GREEN)",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/green/csaf-feed-tlp-green.json",
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/green/csaf-feed-tlp-green.json",
             "categories": {
               "category": [
                 {
@@ -30,7 +30,7 @@
           },
           {
             "title": "CSAF feed (TLP:AMBER)",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/amber/csaf-feed-tlp-amber.json",
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/amber/csaf-feed-tlp-amber.json",
             "categories": {
               "category": [
                 {
@@ -42,7 +42,7 @@
           },
           {
             "title": "CSAF feed (TLP:RED)",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/red/csaf-feed-tlp-red.json",
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/red/csaf-feed-tlp-red.json",
             "categories": {
               "category": [
                 {

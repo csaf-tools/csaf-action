@@ -5,11 +5,11 @@
     "link": [
       {
         "rel": "self",
-        "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/csaf-feed-tlp-white.json"
+        "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/csaf-feed-tlp-white.json"
       },
       {
         "rel": "service",
-        "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/service.json"
+        "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/service.json"
       }
     ],
     "category": [
@@ -18,7 +18,7 @@
         "term": "csaf"
       }
     ],
-    "updated": "2025-09-25T09:32:21Z",
+    "updated": "2025-09-25T09:51:05Z",
     "entry": [
       {
         "id": "example-company-2025-0001",
@@ -26,26 +26,26 @@
         "link": [
           {
             "rel": "self",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json"
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json"
           },
           {
             "rel": "hash",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json.sha256"
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json.sha256"
           },
           {
             "rel": "hash",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json.sha512"
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json.sha512"
           },
           {
             "rel": "signature",
-            "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json.asc"
+            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json.asc"
           }
         ],
         "published": "2025-07-31T12:00:00Z",
         "updated": "2025-07-31T12:00:00Z",
         "content": {
           "type": "application/json",
-          "src": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json"
+          "src": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json"
         },
         "format": {
           "schema": "https://docs.oasis-open.org/csaf/csaf/v2.0/csaf_json_schema.json",

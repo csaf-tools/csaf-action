@@ -5,11 +5,11 @@
     "link": [
       {
         "rel": "self",
-        "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/green/csaf-feed-tlp-green.json"
+        "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/green/csaf-feed-tlp-green.json"
       },
       {
         "rel": "service",
-        "href": "https://wagner-intevation.github.io/csaf-action/.well-known/csaf/service.json"
+        "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/service.json"
       }
     ],
     "category": [
@@ -18,7 +18,7 @@
         "term": "csaf"
       }
     ],
-    "updated": "2025-09-25T09:32:00Z",
+    "updated": "2025-09-25T09:50:48Z",
     "entry": []
   }
 }
