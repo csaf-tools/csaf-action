@@ -29,9 +29,13 @@ if [[ -z "$gh_pages_exists" ]]; then
   git checkout "$previous_branch"
 fi
 
+rm -rf gh-pages
+git clone -b gh-pages . gh-pages
+
 url=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
 echo "$url"
-outputs_url=${url}html
+# remove the trailing slash to prevent urls containing '//' in provider-metadata.json
+outputs_url=${url%/}
 
 DEBIAN_FRONTEND=noninteractive sudo -E apt-get update -qq
 # npm and hunspell for secvisogram, tree for pages.sh
@@ -81,16 +85,23 @@ sudo mkdir -p /var/lib/csaf/
 sudo cp "./csaf_provider/config.toml" /etc/csaf/config.toml
 sudo chgrp www-data /etc/csaf/config.toml
 sudo chmod g+r,o-rwx /etc/csaf/config.toml
-output_folder="$(pwd)/gh-pages/"
-sudo mkdir -p "$output_folder"
-sudo chgrp -R www-data "$output_folder" /var/lib/csaf/
-sudo chmod -R g+rw "$output_folder" /var/lib/csaf/
-# make all parents of $output_folder accessible to www-data
-i="$output_folder"
+web_folder="$(pwd)/gh-pages/"
+internal_output=$(mktemp -d)
+mkdir -p "$web_folder"
+# remove all previous existing data, prepare for a new csaf_provider structure
+rm -rf "${web_folder}/.well-known/csaf/"
+sudo chgrp -R www-data "$web_folder" "$internal_output" /var/lib/csaf/
+sudo chmod -R g+rw "$web_folder" "$internal_output" /var/lib/csaf/
+sudo chmod +x "$internal_output"
+# make all parents of $web_folder accessible to www-data
+i="$web_folder"
 while [[ "$i" != /home ]]; do sudo chmod o+rx "$i"; i="$(dirname "$i")"; done
+# make all parents of $internal_output accessible to www-data
+i="$internal_output"
+while [[ "$i" != /tmp ]]; do sudo chmod o+rx "$i"; i="$(dirname "$i")"; done
 sudo sed -ri \
-  -e "s#^folder *=.*#folder = \"$output_folder\"#" \
-  -e "s#^web *=.*#web = \"$output_folder/html\"#" \
+  -e "s#^folder *=.*#folder = \"$internal_output\"#" \
+  -e "s#^web *=.*#web = \"$web_folder\"#" \
   -e "s#^category *=.*#category = \"${publisher_category}\"#" \
   -e "s#^name *=.*#name = \"${publisher_name}\"#" \
   -e "s#^namespace *=.*#namespace = \"${publisher_namespace}\"#" \

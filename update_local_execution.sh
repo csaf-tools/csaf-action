@@ -21,4 +21,5 @@ sed -ri \
     -e 's#^publisher_contact_details=""#publisher_contact_details="Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact."#' \
     -e 's#^source_csaf_documents="csaf_documents/"#source_csaf_documents="test/inputs/"#' \
     -e 's/echo "url=([^"]+)".*?"/outputs_url=\1/' \
+    -e 's/^url=/rm -rf gh-pages\ngit clone -b gh-pages . gh-pages\n\nurl=/' \
     "$output_file"

@@ -3,21 +3,25 @@
 touch -a .nojekyll
 set -euo pipefail
 
-# Change all permissions from www-data to runner, otherwise we can't write to all directories
-sudo chown -R runner:runner .
+set -x
 
-# convert absolute symbolic links to relative symbolic links, otherwise gh pages can't deploy because of broken absolute symbolic links
+# Change all permissions from www-data to current user (runner), otherwise we can't write to all directories
+sudo chown -R "$USER":"$USER" .
+
+# resolve all (absolute) symbolic links
 find . -name .git -prune -o -type l -print0 | while IFS= read -r -d '' linkname; do
     target="$(readlink -f "$linkname")"
     filename="$(basename "$linkname")"
     pushd "$(dirname "$linkname")" || exit
-    echo "rewrite link $linkname"
+    echo "resolve link $linkname"
     rm "$filename"
-    ln -sfr "$target" "$filename"
+    mkdir "$filename"
+    # we can assume there are no hidden files to copy and all directories are non-empty
+    cp -r "$target"/* "$filename/"
     popd || exit
 done
 
-# generate a index.html files for each directory
+# generate an index.html files for each directory
 find . -name .git -prune -o -type d -print0 | while IFS= read -r -d '' dirname; do
     echo "$dirname"
     pushd "$dirname" || exit
