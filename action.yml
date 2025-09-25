@@ -57,6 +57,10 @@ inputs:
   openpgp_key:
     description: The armored OpenPGP public key, provided as GitHub secret
     required: false
+  generate_index_files:
+    description: Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly.
+    default: false
+    required: false
 
 runs:
   using: composite
@@ -217,7 +221,7 @@ runs:
           "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
         done
         pushd gh-pages || exit
-        "${{ github.action_path }}/pages.sh"
+        generate_index_files=${{ inputs.generate_index_files }} "${{ github.action_path }}/pages.sh"
         popd || exit
 
     - name: Commit changes

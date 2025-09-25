@@ -80,6 +80,7 @@ jobs:
 | `openpgp_key_length` | No | `4096` | If the OpenPGP is to be generated on the fly, this is the key length in bits. |
 | `openpgp_secret_key` | No | - | The armored OpenPGP secret key, provided as GitHub secret. |
 | `openpgp_key` | No | - | The armored OpenPGP public key, provided as GitHub secret. |
+| `generate_index_files` | No | `false` | Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly. |
 
 ### OpenPGP key security
 

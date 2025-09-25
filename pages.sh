@@ -3,8 +3,6 @@
 touch -a .nojekyll
 set -euo pipefail
 
-set -x
-
 # Change all permissions from www-data to current user (runner), otherwise we can't write to all directories
 sudo chown -R "$USER":"$USER" .
 
@@ -21,11 +19,13 @@ find . -name .git -prune -o -type l -print0 | while IFS= read -r -d '' linkname;
     popd || exit
 done
 
-# generate an index.html files for each directory
-find .well-known/csaf/ -name .git -prune -o -type d -print0 | while IFS= read -r -d '' dirname; do
-    echo "$dirname"
-    pushd "$dirname" || exit
-    # tree version 2.1.1 (Ubuntu 24.04) requires -H '.', tree version 2.2.1 requires -H ''
-    tree -a -I .git -I index.html -I .nojekyll -T "CSAF Advisories" --metafirst -h --du -F -D -L 1 -H '.' -o index.html
-    popd || exit
-done
+if [[ "${generate_index_files:-false}" == "true" ]]; then
+    # generate an index.html files for each directory
+    find .well-known/csaf/ -name .git -prune -o -type d -print0 | while IFS= read -r -d '' dirname; do
+        echo "$dirname"
+        pushd "$dirname" || exit
+        # tree version 2.1.1 (Ubuntu 24.04) requires -H '.', tree version 2.2.1 requires -H ''
+        tree -a -I .git -I index.html -I .nojekyll -T "CSAF Advisories" --metafirst -h --du -F -D -L 1 -H '.' -o index.html
+        popd || exit
+    done
+fi

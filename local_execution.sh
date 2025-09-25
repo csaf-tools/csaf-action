@@ -14,6 +14,7 @@ openpgp_key_type="RSA"
 openpgp_key_length="4096"
 openpgp_secret_key=""
 openpgp_key=""
+generate_index_files="false"
 
 # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
 git config --global user.name "github-actions[bot]"
@@ -129,6 +130,6 @@ find ${source_csaf_documents} -type f -name '*.json' -print0 | while IFS= read -
   "./csaf-${csaf_version}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
 done
 pushd gh-pages || exit
-"./pages.sh"
+generate_index_files=${generate_index_files} "./pages.sh"
 popd || exit
 

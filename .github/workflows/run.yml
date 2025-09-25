@@ -26,3 +26,4 @@ jobs:
         publisher_issuing_authority: "We at Example Company are responsible for publishing and maintaining Product Y."
         publisher_contact_details: "Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact."
         source_csaf_documents: test/inputs/
+        generate_index_files: true
