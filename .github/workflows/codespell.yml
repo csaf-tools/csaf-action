@@ -24,7 +24,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v5
-    - name: Install codespell
-      run: pip install "codespell"
     - name: Run codespell
-      run: /home/runner/.local/bin/codespell
+      uses: codespell-project/actions-codespell@v2
+      with:
+        check_hidden: true
+        check_filenames: true
