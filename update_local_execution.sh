@@ -1,13 +1,15 @@
 #!/bin/bash
 
-echo -e '#!/bin/bash\n' >| commands.sh
+output_file="local_execution.sh"
+
+echo -e '#!/bin/bash\n' >| "$output_file"
 
 # environment variables
-yq eval '.inputs | to_entries[] | .key + "=\"" + (.value.default | tostring) + "\""' action.yml >> commands.sh
+yq eval '.inputs | to_entries[] | .key + "=\"" + (.value.default | tostring) + "\""' action.yml >> "$output_file"
 
-echo >> commands.sh
+echo >> "$output_file"
 
-yq -r '.runs.steps[].run' action.yml | grep -v '^null$' | sed -r 's/\$\{\{ *env\.([^ ]+) *\}\}/\$\1/g' >> commands.sh
+yq -r '.runs.steps[].run' action.yml | grep -v '^null$' | sed -r 's/\$\{\{ *env\.([^ ]+) *\}\}/\$\1/g' >> "$output_file"
 
 sed -ri \
     -e 's/\$\{\{ inputs\.([^ ]+) }}/\${\1}/g' \
@@ -19,4 +21,4 @@ sed -ri \
     -e 's#^publisher_contact_details=""#publisher_contact_details="Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact."#' \
     -e 's#^source_csaf_documents="csaf_documents/"#source_csaf_documents="test/inputs/"#' \
     -e 's/echo "url=([^"]+)".*?"/outputs_url=\1/' \
-    commands.sh
+    "$output_file"
