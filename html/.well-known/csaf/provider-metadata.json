@@ -60,6 +60,10 @@
     {
       "fingerprint": "3F806EF8A608B064875EA76E145F9314BAAADC84",
       "url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/openpgp/3F806EF8A608B064875EA76E145F9314BAAADC84.asc"
+    },
+    {
+      "fingerprint": "BBE70052728341D6C3EFFB1A45F1428A1C8C6255",
+      "url": "https://wagner-intevation.github.io/csaf-action/html/.well-known/csaf/openpgp/BBE70052728341D6C3EFFB1A45F1428A1C8C6255.asc"
     }
   ],
   "publisher": {
