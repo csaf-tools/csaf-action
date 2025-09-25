@@ -22,7 +22,7 @@ find . -name .git -prune -o -type l -print0 | while IFS= read -r -d '' linkname;
 done
 
 # generate an index.html files for each directory
-find . -name .git -prune -o -type d -print0 | while IFS= read -r -d '' dirname; do
+find .well-known/csaf/ -name .git -prune -o -type d -print0 | while IFS= read -r -d '' dirname; do
     echo "$dirname"
     pushd "$dirname" || exit
     # tree version 2.1.1 (Ubuntu 24.04) requires -H '.', tree version 2.2.1 requires -H ''
