@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Publish CSAF advisories
-      uses: wagner-intevation/csaf-action@main
+      uses: csaf-tools/csaf-action@main
       with:
         publisher_name: Example Company
         publisher_namespace: https://example.com

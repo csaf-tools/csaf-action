@@ -61,6 +61,10 @@ inputs:
     description: Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly.
     default: false
     required: false
+  target_branch:
+    description: The target branch to push the resulting data to
+    default: gh-pages
+    required: false
 
 runs:
   using: composite
@@ -69,30 +73,33 @@ runs:
       uses: actions/checkout@v4
       with:
         sparse-checkout: ${{ inputs.source_csaf_documents }}
+        path: source
 
     - name: Configure git
+      id: configure_git
       shell: bash
       run: |
+        cd "${GITHUB_WORKSPACE}/source" || exit
         # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        gh_pages_exists=$(git ls-remote --heads origin gh-pages)
+        gh_pages_exists=$(git ls-remote --heads origin "${{ inputs.target_branch }}")
         if [[ -z "$gh_pages_exists" ]]; then
-          echo "Create branch gh-pages"
+          echo "Create branch ${{ inputs.target_branch }}"
           previous_branch=$(git rev-parse --abbrev-ref HEAD)
-          git checkout --orphan gh-pages  # empty branch
+          git checkout --orphan "${{ inputs.target_branch }}"  # empty branch
           git reset --hard  # remove any files
-          git commit --allow-empty --message "Create empty branch gh-pages"
-          git push origin gh-pages
+          git commit --allow-empty --message "Create empty branch ${{ inputs.target_branch }}"
+          git push origin "${{ inputs.target_branch }}"
           git checkout "$previous_branch"
         fi
 
-    - name: Checkout gh-pages
+    - name: Checkout target branch
       uses: actions/checkout@v4
       with:
-        ref: gh-pages
-        # make a checkout in subdirectory. Not possible in parallel directory
-        path: gh-pages
+        ref: "${{ inputs.target_branch }}"
+        # make a checkout in different directory. Not possible in parallel directory (permissions). A subdirectory may collide with existing directory names
+        path: target
 
     - name: Get GitHub Pages URL
       id: pagesurl
@@ -166,12 +173,13 @@ runs:
     - name: Configure csaf_provider
       shell: bash
       run: |
+        set -x
         # for validations.db
         sudo mkdir -p /var/lib/csaf/
         sudo cp "${{ github.action_path }}/csaf_provider/config.toml" /etc/csaf/config.toml
         sudo chgrp www-data /etc/csaf/config.toml
         sudo chmod g+r,o-rwx /etc/csaf/config.toml
-        web_folder="$(pwd)/gh-pages/"
+        web_folder="$GITHUB_WORKSPACE/target"
         internal_output=$(mktemp -d)
         mkdir -p "$web_folder"
         # remove all previous existing data, prepare for a new csaf_provider structure
@@ -216,11 +224,11 @@ runs:
     - name: Upload documents
       shell: bash
       run: |
-        find ${{ inputs.source_csaf_documents }} -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
+        find "$GITHUB_WORKSPACE/source/${{ inputs.source_csaf_documents }}" -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
           echo "Uploading $file"
           "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
         done
-        pushd gh-pages || exit
+        pushd "${GITHUB_WORKSPACE}/target" || exit
         generate_index_files=${{ inputs.generate_index_files }} "${{ github.action_path }}/pages.sh"
         popd || exit
 
@@ -229,5 +237,5 @@ runs:
       uses: stefanzweifel/git-auto-commit-action@v6
       with:
         commit_message: Update CSAF advisories
-        repository: gh-pages
+        repository: target
         add_options: -A

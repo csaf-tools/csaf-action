@@ -81,6 +81,7 @@ jobs:
 | `openpgp_secret_key` | No | - | The armored OpenPGP secret key, provided as GitHub secret. |
 | `openpgp_key` | No | - | The armored OpenPGP public key, provided as GitHub secret. |
 | `generate_index_files` | No | `false` | Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly. |
+| `target_branch` | No | `gh-pages` | The target branch to push the resulting data to. |
 
 ### OpenPGP key security
 

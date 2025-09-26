@@ -15,18 +15,20 @@ openpgp_key_length="4096"
 openpgp_secret_key=""
 openpgp_key=""
 generate_index_files="false"
+target_branch="gh-pages"
 
+cd "./source" || exit
 # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
 git config --global user.name "github-actions[bot]"
 git config --global user.email "github-actions[bot]@users.noreply.github.com"
-gh_pages_exists=$(git ls-remote --heads origin gh-pages)
+gh_pages_exists=$(git ls-remote --heads origin "${target_branch}")
 if [[ -z "$gh_pages_exists" ]]; then
-  echo "Create branch gh-pages"
+  echo "Create branch ${target_branch}"
   previous_branch=$(git rev-parse --abbrev-ref HEAD)
-  git checkout --orphan gh-pages  # empty branch
+  git checkout --orphan "${target_branch}"  # empty branch
   git reset --hard  # remove any files
-  git commit --allow-empty --message "Create empty branch gh-pages"
-  git push origin gh-pages
+  git commit --allow-empty --message "Create empty branch ${target_branch}"
+  git push origin "${target_branch}"
   git checkout "$previous_branch"
 fi
 
@@ -81,12 +83,13 @@ else
   echo "${openpgp_secret_key}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
 fi
 
+set -x
 # for validations.db
 sudo mkdir -p /var/lib/csaf/
 sudo cp "./csaf_provider/config.toml" /etc/csaf/config.toml
 sudo chgrp www-data /etc/csaf/config.toml
 sudo chmod g+r,o-rwx /etc/csaf/config.toml
-web_folder="$(pwd)/gh-pages/"
+web_folder="./target"
 internal_output=$(mktemp -d)
 mkdir -p "$web_folder"
 # remove all previous existing data, prepare for a new csaf_provider structure
@@ -125,11 +128,11 @@ popd || exit
 echo $secvisogram_pid > secvisogram.pid
 wait-for-it localhost:8082
 
-find ${source_csaf_documents} -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
+find "./source/${source_csaf_documents}" -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
   echo "Uploading $file"
   "./csaf-${csaf_version}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
 done
-pushd gh-pages || exit
+pushd "./target" || exit
 generate_index_files=${generate_index_files} "./pages.sh"
 popd || exit
 
