@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Publish CSAF advisories
-      uses: csaf-tools/csaf-action@main
+      uses: csaf-tools/csaf-action@upload_signatures
       with:
         publisher_name: Example Company
         publisher_namespace: https://example.com
@@ -27,3 +27,4 @@ jobs:
         publisher_contact_details: "Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact."
         source_csaf_documents: test/inputs/
         generate_index_files: true
+        openpgp_use_signatures: false

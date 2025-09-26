@@ -35,6 +35,10 @@ inputs:
     description: Path to the CSAF source documents
     default: csaf_documents/
     required: false
+  openpgp_use_signatures:
+    description: Use the signtures files placed along the advisory files with `.asc` file ending
+    default: true
+    required: false
   openpgp_key_email_address:
     description: If the OpenPGP is to be generated on the fly, this is the associated e-mail address
     default: csaf@example.invalid
@@ -145,7 +149,10 @@ runs:
       shell: bash
       run: |
         sudo mkdir -p /etc/csaf/
-        if [[ -z "${{ inputs.openpgp_key }}" || -z "${{ inputs.openpgp_secret_key }}" ]]; then
+        if [[ -n "${{ inputs.openpgp_key }}" && -n "${{ inputs.openpgp_secret_key }}" ]]; then
+          echo "${{ inputs.openpgp_key }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+          echo "${{ inputs.openpgp_secret_key }}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
+        elif [[ "${{ inputs.openpgp_use_signatures }}" != "true" ]]; then
           # based on https://serverfault.com/a/960673/217116
           cat >keydetails <<EOF
               Key-Type: ${{ inputs.openpgp_key_type }}
@@ -165,9 +172,6 @@ runs:
           # save at expected destinations
           gpg --armor --export "${{ inputs.openpgp_key_email_address }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
           gpg --armor --export-secret-keys "${{ inputs.openpgp_key_email_address }}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
-        else
-          echo "${{ inputs.openpgp_key }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
-          echo "${{ inputs.openpgp_secret_key }}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
         fi
 
     - name: Configure csaf_provider
@@ -202,6 +206,7 @@ runs:
           -e "s#^issuing_authority *=.*#issuing_authority = \"${{ inputs.publisher_issuing_authority }}\"#" \
           -e "s#^contact_details *=.*#contact_details = \"${{ inputs.publisher_contact_details }}\"#" \
           -e "s#^\#?canonical_url_prefix *=.*#canonical_url_prefix = \"${{ steps.pagesurl.outputs.url }}\"#" \
+          -e "s/^#?upload_signature *?=.*/upload_signature = ${{ inputs.openpgp_use_signatures }}/" \
           /etc/csaf/config.toml
         sudo cat /etc/csaf/config.toml
         sudo mkdir -p /usr/lib/cgi-bin/
@@ -224,9 +229,14 @@ runs:
     - name: Upload documents
       shell: bash
       run: |
+        set -x
         find "$GITHUB_WORKSPACE/source/${{ inputs.source_csaf_documents }}" -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
           echo "Uploading $file"
-          "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
+          # we cannot quote around the parameter expansion of openpgp_use_signatures as then csaf_upload would get an empty string as parameter if openpgp_use_signatures is not set
+          # shellcheck disable=SC2046
+          "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" \
+            --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password \
+            "$file" $( [[ "${{ inputs.openpgp_use_signatures }}" == "true" ]] && echo "--external_signed" )
         done
         pushd "${GITHUB_WORKSPACE}/target" || exit
         generate_index_files=${{ inputs.generate_index_files }} "${{ github.action_path }}/pages.sh"

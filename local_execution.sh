@@ -8,6 +8,7 @@ publisher_namespace="https://example.com"
 publisher_issuing_authority="We at Example Company are responsible for publishing and maintaining Product Y."
 publisher_contact_details="Example Company can be reached at contact_us@example.com or via our website at https://www.example.com/contact."
 source_csaf_documents="test/inputs/"
+openpgp_use_signatures="true"
 openpgp_key_email_address="csaf@example.invalid"
 openpgp_key_real_name="Example CSAF Publisher"
 openpgp_key_type="RSA"
@@ -58,7 +59,10 @@ wget "https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v$
 tar -xzf "secvisogram-csaf-validator-service-${secvisogram_version}.tar.gz"
 
 sudo mkdir -p /etc/csaf/
-if [[ -z "${openpgp_key}" || -z "${openpgp_secret_key}" ]]; then
+if [[ -n "${openpgp_key}" && -n "${openpgp_secret_key}" ]]; then
+  echo "${openpgp_key}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+  echo "${openpgp_secret_key}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
+elif [[ "${openpgp_use_signatures}" != "true" ]]; then
   # based on https://serverfault.com/a/960673/217116
   cat >keydetails <<EOF
       Key-Type: ${openpgp_key_type}
@@ -78,9 +82,6 @@ EOF
   # save at expected destinations
   gpg --armor --export "${openpgp_key_email_address}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
   gpg --armor --export-secret-keys "${openpgp_key_email_address}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
-else
-  echo "${openpgp_key}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
-  echo "${openpgp_secret_key}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
 fi
 
 set -x
@@ -112,6 +113,7 @@ sudo sed -ri \
   -e "s#^issuing_authority *=.*#issuing_authority = \"${publisher_issuing_authority}\"#" \
   -e "s#^contact_details *=.*#contact_details = \"${publisher_contact_details}\"#" \
   -e "s#^\#?canonical_url_prefix *=.*#canonical_url_prefix = \"${outputs_url}\"#" \
+  -e "s/^#?upload_signature *?=.*/upload_signature = ${openpgp_use_signatures}/" \
   /etc/csaf/config.toml
 sudo cat /etc/csaf/config.toml
 sudo mkdir -p /usr/lib/cgi-bin/
@@ -128,9 +130,14 @@ popd || exit
 echo $secvisogram_pid > secvisogram.pid
 wait-for-it localhost:8082
 
+set -x
 find "./source/${source_csaf_documents}" -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
   echo "Uploading $file"
-  "./csaf-${csaf_version}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password "$file"
+  # we cannot quote around the parameter expansion of openpgp_use_signatures as then csaf_upload would get an empty string as parameter if openpgp_use_signatures is not set
+  # shellcheck disable=SC2046
+  "./csaf-${csaf_version}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" \
+    --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password \
+    "$file" $( [[ "${openpgp_use_signatures}" == "true" ]] && echo "--external_signed" )
 done
 pushd "./target" || exit
 generate_index_files=${generate_index_files} "./pages.sh"

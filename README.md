@@ -74,6 +74,7 @@ jobs:
 | `publisher_namespace` | Yes | - | URL of the CSAF Publisher. |
 | `publisher_issuing_authority` | Yes | - | Description of the Issuing Authority of the CSAF Publisher. |
 | `publisher_contact_details` | Yes | - | Contact details of the CSAF Publisher. |
+| `openpgp_use_signatures` | No | `true` | Use the signtures files placed along the advisory files with `.asc` file ending |
 | `openpgp_key_email_address` | No | `csaf@example.invalid` | If the OpenPGP is to be generated on the fly, this is the associated e-mail address. |
 | `openpgp_key_real_name` | No | `Example CSAF Publisher` | If the OpenPGP is to be generated on the fly, this is the associated real name. |
 | `openpgp_key_type` | No | `RSA` | If the OpenPGP is to be generated on the fly, this is the key type. |
@@ -83,11 +84,50 @@ jobs:
 | `generate_index_files` | No | `false` | Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly. |
 | `target_branch` | No | `gh-pages` | The target branch to push the resulting data to. |
 
-### OpenPGP key security
+### OpenPGP signatures
+
+#### Signature files (default & recommended)
+
+For each advisory in `source_csaf_documents`, place an OpenPGP signature:
+```bash
+gpg --armor --detach-sign --local-user KEYID --sign test/inputs/example-company-2025-0001.json
+```
+
+```yaml
+with:
+  openpgp_use_signatures: true
+```
+
+#### OpenPGP Secret key uploaded as GitHub secret
+
+Create an OpenPGP key, export it using
+```bash
+gpg --armor --export KEYID > openpgp_public.asc
+gpg --armor --export-secret-keys KEYID > openpgp_private.asc
+```
+Go to the settings of your repositories, switch to page *Security* > *Secrets and variables* > *Actions* and create two repository secrets:
+* `CSAF_OPENPGP_KEY`: Content of file `openpgp_public.asc`
+* `CSAF_OPENPGP_SECRET_KEY`: Content of file `openpgp_private.asc`
+
+```yaml
+with:
+  openpgp_secret_key: ${{ secrets.CSAF_OPENPGP_SECRET_KEY }}
+  openpgp_key: ${{ secrets.CSAF_OPENPGP_KEY }}
+```
+
+##### Security
 
 As the OpenPGP key needs to be provided unencrypted at GitHub, keep in mind that GitHub/Microsoft can read and use it.
 Please create a specific OpenPGP key for this purpose, do not reuse any other existing key and prepare for a potential confidentiality breach.
 Keep the revocation certificate ready in case you need to revoke the key.
+
+#### Generating key on the fly
+
+When neither an OpenPGP key is given as secret, nor the signatures are in use, then the Action generates an OpenPGP key on the fly and signs the advisories with it.
+Please mind that this the absolute fall back and the signatures can't be verified, neither can the private key be recovered or reused for the next run.
+The resulting directory structure is CSAF-valid, but without useful signatures.
+
+This mode is useful for starting from scratch, demo and test purposes.
 
 ### Changing the URL
 
