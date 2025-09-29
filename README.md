@@ -80,7 +80,7 @@ jobs:
 | `openpgp_key_type` | No | `RSA` | If the OpenPGP is to be generated on the fly, this is the key type. |
 | `openpgp_key_length` | No | `4096` | If the OpenPGP is to be generated on the fly, this is the key length in bits. |
 | `openpgp_secret_key` | No | - | The armored OpenPGP secret key, provided as GitHub secret. |
-| `openpgp_key` | No | - | The armored OpenPGP public key, provided as GitHub secret. |
+| `openpgp_public_key` | No | - | The armored OpenPGP public key, provided as string or GitHub secret. |
 | `generate_index_files` | No | `false` | Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly. |
 | `target_branch` | No | `gh-pages` | The target branch to push the resulting data to. |
 
@@ -92,10 +92,14 @@ For each advisory in `source_csaf_documents`, place an OpenPGP signature:
 ```bash
 gpg --armor --detach-sign --local-user KEYID --sign test/inputs/example-company-2025-0001.json
 ```
+And set these two parameters. `openpgp_public_key` must be the one public key that you are using for the signatures.
 
 ```yaml
 with:
   openpgp_use_signatures: true
+  openpgp_public_key: |
+    -----BEGIN PGP PUBLIC KEY BLOCK-----
+    ...
 ```
 
 #### OpenPGP Secret key uploaded as GitHub secret
@@ -112,7 +116,7 @@ Go to the settings of your repositories, switch to page *Security* > *Secrets an
 ```yaml
 with:
   openpgp_secret_key: ${{ secrets.CSAF_OPENPGP_SECRET_KEY }}
-  openpgp_key: ${{ secrets.CSAF_OPENPGP_KEY }}
+  openpgp_public_key: ${{ secrets.CSAF_OPENPGP_PUBLIC_KEY }}
 ```
 
 ##### Security

@@ -14,7 +14,7 @@ openpgp_key_real_name="Example CSAF Publisher"
 openpgp_key_type="RSA"
 openpgp_key_length="4096"
 openpgp_secret_key=""
-openpgp_key=""
+openpgp_public_key=""
 generate_index_files="false"
 target_branch="gh-pages"
 
@@ -59,10 +59,12 @@ wget "https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v$
 tar -xzf "secvisogram-csaf-validator-service-${secvisogram_version}.tar.gz"
 
 sudo mkdir -p /etc/csaf/
-if [[ -n "${openpgp_key}" && -n "${openpgp_secret_key}" ]]; then
-  echo "${openpgp_key}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+if [[ -n "${openpgp_public_key}" ]]; then  # using signed advisories or provided public/private key
+  echo "${openpgp_public_key}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+fi
+if [[ -n "${openpgp_secret_key}" ]]; then  # using public/private key
   echo "${openpgp_secret_key}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
-elif [[ "${openpgp_use_signatures}" != "true" ]]; then
+elif [[ "${openpgp_use_signatures}" != "true" ]]; then  # generate on the fly
   # based on https://serverfault.com/a/960673/217116
   cat >keydetails <<EOF
       Key-Type: ${openpgp_key_type}
@@ -90,7 +92,7 @@ sudo mkdir -p /var/lib/csaf/
 sudo cp "./csaf_provider/config.toml" /etc/csaf/config.toml
 sudo chgrp www-data /etc/csaf/config.toml
 sudo chmod g+r,o-rwx /etc/csaf/config.toml
-web_folder="./target"
+web_folder=$(readlink -f "./target")
 internal_output=$(mktemp -d)
 mkdir -p "$web_folder"
 # remove all previous existing data, prepare for a new csaf_provider structure

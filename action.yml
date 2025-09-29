@@ -58,7 +58,7 @@ inputs:
   openpgp_secret_key:
     description: The armored OpenPGP secret key, provided as GitHub secret
     required: false
-  openpgp_key:
+  openpgp_public_key:
     description: The armored OpenPGP public key, provided as GitHub secret
     required: false
   generate_index_files:
@@ -149,10 +149,12 @@ runs:
       shell: bash
       run: |
         sudo mkdir -p /etc/csaf/
-        if [[ -n "${{ inputs.openpgp_key }}" && -n "${{ inputs.openpgp_secret_key }}" ]]; then
-          echo "${{ inputs.openpgp_key }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+        if [[ -n "${{ inputs.openpgp_public_key }}" ]]; then  # using signed advisories or provided public/private key
+          echo "${{ inputs.openpgp_public_key }}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
+        fi
+        if [[ -n "${{ inputs.openpgp_secret_key }}" ]]; then  # using public/private key
           echo "${{ inputs.openpgp_secret_key }}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
-        elif [[ "${{ inputs.openpgp_use_signatures }}" != "true" ]]; then
+        elif [[ "${{ inputs.openpgp_use_signatures }}" != "true" ]]; then  # generate on the fly
           # based on https://serverfault.com/a/960673/217116
           cat >keydetails <<EOF
               Key-Type: ${{ inputs.openpgp_key_type }}
@@ -183,7 +185,7 @@ runs:
         sudo cp "${{ github.action_path }}/csaf_provider/config.toml" /etc/csaf/config.toml
         sudo chgrp www-data /etc/csaf/config.toml
         sudo chmod g+r,o-rwx /etc/csaf/config.toml
-        web_folder="$GITHUB_WORKSPACE/target"
+        web_folder=$(readlink -f "$GITHUB_WORKSPACE/target")
         internal_output=$(mktemp -d)
         mkdir -p "$web_folder"
         # remove all previous existing data, prepare for a new csaf_provider structure
