@@ -3,6 +3,10 @@ Publish your CSAF Advisories from a GitHub repository to GitHub Pages.
 
 *Validating, signing & publishing [CSAF](https://docs.oasis-open.org/csaf/csaf/v2.0/csaf-v2.0.html) security advisories.*
 
+## Development status
+
+Please note that this Action is not yet stable, and breaking changes may occur.
+
 ## What does it do?
 
 The CSAF Action does
@@ -51,7 +55,7 @@ jobs:
 
     steps:
     - name: Publish CSAF advisories
-      uses: wagner-intevation/csaf-action@main
+      uses: wagner-intevation/csaf-action@v0
       with:
         publisher_name: Example Test Company
         publisher_namespace: https://test.example.com
@@ -102,6 +106,8 @@ with:
     ...
 ```
 
+The parameter `openpgp_public_key` can also be set using a secret, see the example below.
+
 #### OpenPGP Secret key uploaded as GitHub secret
 
 Create an OpenPGP key, export it using
@@ -115,6 +121,7 @@ Go to the settings of your repositories, switch to page *Security* > *Secrets an
 
 ```yaml
 with:
+  openpgp_use_signatures: false
   openpgp_secret_key: ${{ secrets.CSAF_OPENPGP_SECRET_KEY }}
   openpgp_public_key: ${{ secrets.CSAF_OPENPGP_PUBLIC_KEY }}
 ```
