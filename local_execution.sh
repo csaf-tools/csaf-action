@@ -63,6 +63,10 @@ if [[ -n "${openpgp_public_key}" ]]; then  # using signed advisories or provided
   echo "${openpgp_public_key}" | sudo tee /etc/csaf/openpgp_public.asc > /dev/null
 fi
 if [[ -n "${openpgp_secret_key}" ]]; then  # using public/private key
+  if [[ -z "${openpgp_public_key}" ]]; then
+    echo "To sign with the given secret key, the public key must be given as well." > /dev/stderr
+    exit 1
+  fi
   echo "${openpgp_secret_key}" | sudo tee /etc/csaf/openpgp_private.asc > /dev/null
 elif [[ "${openpgp_use_signatures}" != "true" ]]; then  # generate on the fly
   # based on https://serverfault.com/a/960673/217116
