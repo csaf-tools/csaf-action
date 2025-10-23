@@ -14,7 +14,7 @@ The CSAF Action does
 * validate all your CSAF advisories
 * create a CSAF provider with it
 * sign the documents them optionally with your OpenPGP key
-* publish the result with GitHub Pages to `https://<woner>.github.io/<repository>/`.
+* publish the result with GitHub Pages to `https://<owner>.github.io/<repository>/`.
 
 Internally, it
 
