@@ -14,7 +14,7 @@ The CSAF Action does
 * validate all your CSAF advisories
 * create a CSAF provider with it
 * sign the documents them optionally with your OpenPGP key
-* publish the result with GitHub Pages to `https://<woner>.github.io/<repository>/`.
+* publish the result with GitHub Pages to `https://<owner>.github.io/<repository>/`.
 
 Internally, it
 
@@ -55,7 +55,7 @@ jobs:
 
     steps:
     - name: Publish CSAF advisories
-      uses: wagner-intevation/csaf-action@v0
+      uses: csaf-tools/csaf-action@v0
       with:
         publisher_name: Example Test Company
         publisher_namespace: https://test.example.com
