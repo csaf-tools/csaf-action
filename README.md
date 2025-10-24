@@ -3,6 +3,12 @@ Publish your CSAF Advisories from a GitHub repository to GitHub Pages.
 
 *Validating, signing & publishing [CSAF](https://docs.oasis-open.org/csaf/csaf/v2.0/csaf-v2.0.html) security advisories.*
 
+<!--
+ SPDX-License-Identifier: Apache-2.0
+ SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+ Software-Engineering: 2025 Intevation GmbH <https://intevation.de>
+-->
+
 ## Development status
 
 Please note that this Action is not yet stable, and breaking changes may occur.
@@ -78,7 +84,7 @@ jobs:
 | `publisher_namespace` | Yes | - | URL of the CSAF Publisher. |
 | `publisher_issuing_authority` | Yes | - | Description of the Issuing Authority of the CSAF Publisher. |
 | `publisher_contact_details` | Yes | - | Contact details of the CSAF Publisher. |
-| `openpgp_use_signatures` | No | `true` | Use the signtures files placed along the advisory files with `.asc` file ending |
+| `openpgp_use_signatures` | No | `true` | Use the signature files placed along the advisory files with `.asc` file ending |
 | `openpgp_key_email_address` | No | `csaf@example.invalid` | If the OpenPGP is to be generated on the fly, this is the associated e-mail address. |
 | `openpgp_key_real_name` | No | `Example CSAF Publisher` | If the OpenPGP is to be generated on the fly, this is the associated real name. |
 | `openpgp_key_type` | No | `RSA` | If the OpenPGP is to be generated on the fly, this is the key type. |
@@ -146,4 +152,11 @@ When the GitHub Pages URL changes, the file `html/.well-known/csaf/provider-meta
 
 ## License
 
-FIXME
+**todo**
+
+```
+SPDX-License-Identifier: Apache-2.0
+
+SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+Software-Engineering: 2025 Intevation GmbH <https://intevation.de>
+```
