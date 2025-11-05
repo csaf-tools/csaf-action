@@ -29,3 +29,5 @@ jobs:
       with:
         check_hidden: true
         check_filenames: true
+        # for www.bsi.bund.de
+        ignore_words_list: bund
