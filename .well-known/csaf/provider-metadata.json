@@ -40,14 +40,14 @@
       "directory_url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/red"
     }
   ],
-  "last_updated": "2025-11-05T13:25:52Z",
+  "last_updated": "2025-11-05T14:01:04Z",
   "list_on_CSAF_aggregators": true,
   "metadata_version": "2.0",
   "mirror_on_CSAF_aggregators": true,
   "public_openpgp_keys": [
     {
-      "fingerprint": "221337ED3A8F5BEFD845AF0204E38AC029D36701",
-      "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/openpgp/221337ED3A8F5BEFD845AF0204E38AC029D36701.asc"
+      "fingerprint": "67A896AA11391D17FADF33CD9B5B1AA065FEEC31",
+      "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/openpgp/67A896AA11391D17FADF33CD9B5B1AA065FEEC31.asc"
     }
   ],
   "publisher": {
