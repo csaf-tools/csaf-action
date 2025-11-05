@@ -22,6 +22,8 @@ The CSAF Action does
 * sign the documents them optionally with your OpenPGP key
 * publish the result with GitHub Pages to `https://<owner>.github.io/<repository>/`.
 
+On every commit containing a change in the document directory, the CSAF Action updates the existing structure and adds the newly added documents.
+
 Internally, it
 
 - creates a branch `gh-pages` if it does not yet exists
