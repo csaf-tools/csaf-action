@@ -9,11 +9,11 @@ author:
 inputs:
   csaf_version:
     description: The version of the gocsaf/csaf tool suite
-    default: 3.3.0
+    default: 3.4.0
     required: false
   secvisogram_version:
     description: Version of the secvisogram validator service
-    default: 2.0.7
+    default: 2.0.14
     required: false
   publisher_category:
     description: The category of the CSAF Publisher
