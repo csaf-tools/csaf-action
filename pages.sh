@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 touch -a .nojekyll
 set -euo pipefail
 

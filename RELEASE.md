@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Release documentation
 
 This document contains some notes for the maintainers of the CSAF action when creating a new release of the action.

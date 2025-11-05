@@ -1,8 +1,13 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 output_file="local_execution.sh"
 
-echo -e '#!/bin/bash\n' >| "$output_file"
+# '\-' is to prevent a confusion of `reuse lint`
+echo -e '#!/bin/bash\n# SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>\n# SPDX-License\-Identifier: Apache-2.0\n' >| "$output_file"
 
 # environment variables
 yq eval '.inputs | to_entries[] | .key + "=\"" + (.value.default | tostring) + "\""' action.yml >> "$output_file"

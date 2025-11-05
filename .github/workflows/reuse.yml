@@ -1,0 +1,29 @@
+#Github Workflow reuse licensecheck
+#
+#SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+#SPDX-License-Identifier: Apache-2.0
+
+name: "License Check"
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  license:
+    name: Check license compliance
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+
+    - name: REUSE compliance check
+      uses: fsfe/reuse-action@v6

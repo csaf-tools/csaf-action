@@ -1,7 +1,7 @@
 #Github Workflow to find and notify about misspellings
 #
 #SPDX-FileCopyrightText: 2025 Intevation GmbH
-#SPDX-License-Identifier: AGPL-3.0-or-later
+#SPDX-License-Identifier: Apache-2.0
 
 name: "Codespell spelling check"
 
