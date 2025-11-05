@@ -1,9 +1,9 @@
 #!/bin/bash
-#SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
-#SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+# SPDX-License\-Identifier: Apache-2.0
 
-csaf_version="3.3.0"
-secvisogram_version="2.0.7"
+csaf_version="3.4.0"
+secvisogram_version="2.0.14"
 publisher_category="vendor"
 publisher_name="Example Company"
 publisher_namespace="https://example.com"
@@ -19,6 +19,7 @@ openpgp_secret_key=""
 openpgp_public_key=""
 generate_index_files="false"
 target_branch="gh-pages"
+tlps="csaf,white"
 
 cd "./source" || exit
 # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
@@ -34,6 +35,8 @@ if [[ -z "$gh_pages_exists" ]]; then
   git push origin "${target_branch}"
   git checkout "$previous_branch"
 fi
+json_tlps=$(echo ${tlps} | jq -cR 'split(",")')
+echo ${json_tlps}
 
 rm -rf gh-pages
 git clone -b gh-pages . gh-pages
@@ -112,6 +115,8 @@ while [[ "$i" != /home ]]; do sudo chmod o+rx "$i"; i="$(dirname "$i")"; done
 # make all parents of $internal_output accessible to www-data
 i="$internal_output"
 while [[ "$i" != /tmp ]]; do sudo chmod o+rx "$i"; i="$(dirname "$i")"; done
+# convert type of parameter tlps
+json_tlps=$(echo ${tlps} | jq -cR 'split(",")')
 sudo sed -ri \
   -e "s#^folder *=.*#folder = \"$internal_output\"#" \
   -e "s#^web *=.*#web = \"$web_folder\"#" \
@@ -122,6 +127,7 @@ sudo sed -ri \
   -e "s#^contact_details *=.*#contact_details = \"${publisher_contact_details}\"#" \
   -e "s#^\#?canonical_url_prefix *=.*#canonical_url_prefix = \"${outputs_url}\"#" \
   -e "s/^#?upload_signature *?=.*/upload_signature = ${openpgp_use_signatures}/" \
+  -e "s/^#?tlps *?=.*/tlps = ${json_tlps}/" \
   /etc/csaf/config.toml
 sudo cat /etc/csaf/config.toml
 sudo mkdir -p /usr/lib/cgi-bin/

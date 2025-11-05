@@ -69,6 +69,11 @@ inputs:
     description: The target branch to push the resulting data to
     default: gh-pages
     required: false
+  tlps:
+    description: 'Set the TLP levels allowed to be send with the upload request. Possible levels: "csaf", "white", "amber", "green", "red". The "csaf" entry lets the provider take the value from the CSAF document.'
+    # this is not a JSON-like string as using that would cause problems with GitHub's Action parser
+    default: csaf,white
+    required: false
 
 runs:
   using: composite
@@ -97,6 +102,8 @@ runs:
           git push origin "${{ inputs.target_branch }}"
           git checkout "$previous_branch"
         fi
+        json_tlps=$(echo ${{ inputs.tlps }} | jq -cR 'split(",")')
+        echo ${json_tlps}
 
     - name: Checkout target branch
       uses: actions/checkout@v4
@@ -203,6 +210,8 @@ runs:
         # make all parents of $internal_output accessible to www-data
         i="$internal_output"
         while [[ "$i" != /tmp ]]; do sudo chmod o+rx "$i"; i="$(dirname "$i")"; done
+        # convert type of parameter tlps
+        json_tlps=$(echo ${{ inputs.tlps }} | jq -cR 'split(",")')
         sudo sed -ri \
           -e "s#^folder *=.*#folder = \"$internal_output\"#" \
           -e "s#^web *=.*#web = \"$web_folder\"#" \
@@ -213,6 +222,7 @@ runs:
           -e "s#^contact_details *=.*#contact_details = \"${{ inputs.publisher_contact_details }}\"#" \
           -e "s#^\#?canonical_url_prefix *=.*#canonical_url_prefix = \"${{ steps.pagesurl.outputs.url }}\"#" \
           -e "s/^#?upload_signature *?=.*/upload_signature = ${{ inputs.openpgp_use_signatures }}/" \
+          -e "s/^#?tlps *?=.*/tlps = ${json_tlps}/" \
           /etc/csaf/config.toml
         sudo cat /etc/csaf/config.toml
         sudo mkdir -p /usr/lib/cgi-bin/
