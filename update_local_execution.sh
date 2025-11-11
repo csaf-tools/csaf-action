@@ -6,8 +6,8 @@
 
 output_file="local_execution.sh"
 
-# '\-' is to prevent a confusion of `reuse lint`
-echo -e '#!/bin/bash\n# SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>\n# SPDX-License\-Identifier: Apache-2.0\n' >| "$output_file"
+# shebang and SPDX headers
+head -n 6 "$0" >| "$output_file"
 
 # environment variables
 yq eval '.inputs | to_entries[] | .key + "=\"" + (.value.default | tostring) + "\""' action.yml >> "$output_file"

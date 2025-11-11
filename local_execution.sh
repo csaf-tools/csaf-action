@@ -1,6 +1,8 @@
 #!/bin/bash
+
 # SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
-# SPDX-License\-Identifier: Apache-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
 
 csaf_version="3.4.0"
 secvisogram_version="2.0.14"
