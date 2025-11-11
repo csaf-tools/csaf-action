@@ -188,7 +188,12 @@ find "./source/${source_csaf_documents}" -type f -name '*.json' -print0 | while 
     --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password \
     "$file" $( [[ "${openpgp_use_signatures}" == "true" ]] && echo "--external_signed" )
 done
+
+
+tree_version=$(tree --version | grep -Eo 'v[0-9.]+')
+tree_outro_filename=$(mktemp)
+sed "s/TREE_VERSION_NUMBER/${tree_version}/" ./tree-outro-template.html > "${tree_outro_filename}"
 pushd "./target" || exit
-generate_index_files=${generate_index_files} "./pages.sh"
+generate_index_files=${generate_index_files} tree_outro_filename=${tree_outro_filename} "./pages.sh"
 popd || exit
 
