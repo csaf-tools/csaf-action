@@ -79,8 +79,8 @@ jobs:
 | Name | Required | Default | Description |
 |------|----------|---------|-------------|
 | `source_csaf_documents` | No | `csaf_documents/` | Directory to the Source CSAF Advisory JSON files. |
-| `csaf_version` | No | `3.4.0` | The version of the gocsaf/csaf tool suite. |
-| `secvisogram_version` | No | `2.0.14` | Version of the secvisogram validator service. |
+| `csaf_version` | No | `3` | The version of the gocsaf/csaf tool suite. Either only a major version number or the exact version number. |
+| `secvisogram_version` | No | `2` | Version of the secvisogram validator service. Either only a major version number or the exact version number. |
 | `publisher_category` | No | `vendor` | The category of the CSAF Publisher. |
 | `publisher_name` | Yes | - | Name of the CSAF Publisher. |
 | `publisher_namespace` | Yes | - | URL of the CSAF Publisher. |

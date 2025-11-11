@@ -8,12 +8,12 @@ author:
 
 inputs:
   csaf_version:
-    description: The version of the gocsaf/csaf tool suite
-    default: 3.4.0
+    description: The version of the gocsaf/csaf tool suite. Either only a major version number or the exact version number.
+    default: 3
     required: false
   secvisogram_version:
-    description: Version of the secvisogram validator service
-    default: 2.0.14
+    description: Version of the secvisogram validator service. Either only a major version number or the exact version number.
+    default: 2
     required: false
   publisher_category:
     description: The category of the CSAF Publisher
@@ -103,7 +103,6 @@ runs:
           git checkout "$previous_branch"
         fi
         json_tlps=$(echo ${{ inputs.tlps }} | jq -cR 'split(",")')
-        echo ${json_tlps}
 
     - name: Checkout target branch
       uses: actions/checkout@v4
@@ -143,14 +142,54 @@ runs:
     - name: Get CSAF tools
       shell: bash
       run: |
-        wget "https://github.com/gocsaf/csaf/releases/download/v${{ inputs.csaf_version }}/csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz"
-        tar -xzf "csaf-${{ inputs.csaf_version }}-gnulinux-amd64.tar.gz"
+        # If csaf_version is in format [0-9]+ (major version only), get the latest tag matching this major version
+        if [[ "${{ inputs.csaf_version }}" =~ ^[0-9]+$ ]]; then
+          major_version="${{ inputs.csaf_version }}"
+          # Get all tags matching the major version and sort by version number to get the latest
+          latest_tag=$(gh api repos/gocsaf/csaf/tags --jq ".[].name | select(startswith(\"v${major_version}.\"))" | sort -V | tail -n1)
+          if [[ -n "${latest_tag}" ]]; then
+            echo "Found latest tag: ${latest_tag}"
+            # Remove the 'v' prefix for the version number
+            csaf_version="${latest_tag#v}"
+          else
+            echo "Error: No tags found matching '${major_version}'."
+            exit 1
+          fi
+        else
+          csaf_version="${{ inputs.csaf_version }}"
+        fi
+        echo "csaf_version=${csaf_version}" >> "$GITHUB_ENV"
+
+        wget "https://github.com/gocsaf/csaf/releases/download/v${csaf_version}/csaf-${csaf_version}-gnulinux-amd64.tar.gz"
+        tar -xzf "csaf-${csaf_version}-gnulinux-amd64.tar.gz"
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Install secvisogram
       shell: bash
       run: |
-        wget "https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${{ inputs.secvisogram_version }}.tar.gz" -O "secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz"
-        tar -xzf "secvisogram-csaf-validator-service-${{ inputs.secvisogram_version }}.tar.gz"
+        # If secvisogram_version is in format [0-9]+ (major version only), get the latest tag matching this major version
+        if [[ "${{ inputs.secvisogram_version }}" =~ ^[0-9]+$ ]]; then
+          major_version="${{ inputs.secvisogram_version }}"
+          # Get all tags matching the major version and sort by version number to get the latest
+          latest_tag=$(gh api repos/secvisogram/csaf-validator-service/tags --jq ".[].name | select(startswith(\"v${major_version}.\"))" | sort -V | tail -n1)
+          if [[ -n "${latest_tag}" ]]; then
+            echo "Found latest tag: ${latest_tag}"
+            # Remove the 'v' prefix for the version number
+            secvisogram_version="${latest_tag#v}"
+          else
+            echo "Error: No tags found matching '${major_version}'."
+            exit 1
+          fi
+        else
+          secvisogram_version="${{ inputs.secvisogram_version }}"
+        fi
+        echo "secvisogram_version=${secvisogram_version}" >> "$GITHUB_ENV"
+
+        wget "https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${secvisogram_version}.tar.gz" -O "secvisogram-csaf-validator-service-${secvisogram_version}.tar.gz"
+        tar -xzf "secvisogram-csaf-validator-service-${secvisogram_version}.tar.gz"
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Create or process OpenPGP key
       shell: bash
@@ -226,15 +265,15 @@ runs:
           /etc/csaf/config.toml
         sudo cat /etc/csaf/config.toml
         sudo mkdir -p /usr/lib/cgi-bin/
-        sudo cp "csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_provider" /usr/lib/cgi-bin/csaf_provider.go
+        sudo cp "csaf-${{ env.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_provider" /usr/lib/cgi-bin/csaf_provider.go
         curl -f http://127.0.0.1/cgi-bin/csaf_provider.go/api/create  -H 'X-Csaf-Provider-Auth: $2a$10$QL0Qy7CeOSdWDrdw6huw0uFk2szqxMssoihVn64BbZEPzqXwPThgu'
         # has no proper exit codes currently: https://github.com/gocsaf/csaf/issues/669
-        # "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
+        # "./csaf-${{ env.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
 
     - name: Setup secvisogram
       shell: bash
       run: |
-        pushd "csaf-validator-service-${{ inputs.secvisogram_version }}" || exit
+        pushd "csaf-validator-service-${{ env.secvisogram_version }}" || exit
         npm ci
         nohup npm run dev < /dev/null &> secvisogram.log &
         secvisogram_pid=$!
@@ -250,7 +289,7 @@ runs:
           echo "Uploading $file"
           # we cannot quote around the parameter expansion of openpgp_use_signatures as then csaf_upload would get an empty string as parameter if openpgp_use_signatures is not set
           # shellcheck disable=SC2046
-          "./csaf-${{ inputs.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" \
+          "./csaf-${{ env.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" \
             --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password \
             "$file" $( [[ "${{ inputs.openpgp_use_signatures }}" == "true" ]] && echo "--external_signed" )
         done

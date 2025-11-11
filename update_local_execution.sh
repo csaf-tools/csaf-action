@@ -14,7 +14,7 @@ yq eval '.inputs | to_entries[] | .key + "=\"" + (.value.default | tostring) + "
 
 echo >> "$output_file"
 
-yq -r '.runs.steps[].run' action.yml | grep -v '^null$' | sed -r 's/\$\{\{ *env\.([^ ]+) *\}\}/\$\1/g' >> "$output_file"
+yq -r '.runs.steps[].run' action.yml | grep -v '^null$' | sed -r 's/\$\{\{ *env\.([^ ]+) *\}\}/\$\1/g' | grep -v "GITHUB_ENV" >> "$output_file"
 
 sed -ri \
     -e 's/\$\{\{ inputs\.([^ ]+) }}/\${\1}/g' \

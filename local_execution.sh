@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-csaf_version="3.4.0"
-secvisogram_version="2.0.14"
+csaf_version="3"
+secvisogram_version="2"
 publisher_category="vendor"
 publisher_name="Example Company"
 publisher_namespace="https://example.com"
@@ -38,7 +38,6 @@ if [[ -z "$gh_pages_exists" ]]; then
   git checkout "$previous_branch"
 fi
 json_tlps=$(echo ${tlps} | jq -cR 'split(",")')
-echo ${json_tlps}
 
 rm -rf gh-pages
 git clone -b gh-pages . gh-pages
@@ -59,8 +58,42 @@ sudo systemctl start fcgiwrap.socket
 sudo systemctl reload-or-restart nginx.service
 wait-for-it localhost:80
 
+# If csaf_version is in format [0-9]+ (major version only), get the latest tag matching this major version
+if [[ "${csaf_version}" =~ ^[0-9]+$ ]]; then
+  major_version="${csaf_version}"
+  # Get all tags matching the major version and sort by version number to get the latest
+  latest_tag=$(gh api repos/gocsaf/csaf/tags --jq ".[].name | select(startswith(\"v${major_version}.\"))" | sort -V | tail -n1)
+  if [[ -n "${latest_tag}" ]]; then
+    echo "Found latest tag: ${latest_tag}"
+    # Remove the 'v' prefix for the version number
+    csaf_version="${latest_tag#v}"
+  else
+    echo "Error: No tags found matching '${major_version}'."
+    exit 1
+  fi
+else
+  csaf_version="${csaf_version}"
+fi
+
 wget "https://github.com/gocsaf/csaf/releases/download/v${csaf_version}/csaf-${csaf_version}-gnulinux-amd64.tar.gz"
 tar -xzf "csaf-${csaf_version}-gnulinux-amd64.tar.gz"
+
+# If secvisogram_version is in format [0-9]+ (major version only), get the latest tag matching this major version
+if [[ "${secvisogram_version}" =~ ^[0-9]+$ ]]; then
+  major_version="${secvisogram_version}"
+  # Get all tags matching the major version and sort by version number to get the latest
+  latest_tag=$(gh api repos/secvisogram/csaf-validator-service/tags --jq ".[].name | select(startswith(\"v${major_version}.\"))" | sort -V | tail -n1)
+  if [[ -n "${latest_tag}" ]]; then
+    echo "Found latest tag: ${latest_tag}"
+    # Remove the 'v' prefix for the version number
+    secvisogram_version="${latest_tag#v}"
+  else
+    echo "Error: No tags found matching '${major_version}'."
+    exit 1
+  fi
+else
+  secvisogram_version="${secvisogram_version}"
+fi
 
 wget "https://github.com/secvisogram/csaf-validator-service/archive/refs/tags/v${secvisogram_version}.tar.gz" -O "secvisogram-csaf-validator-service-${secvisogram_version}.tar.gz"
 tar -xzf "secvisogram-csaf-validator-service-${secvisogram_version}.tar.gz"
@@ -133,12 +166,12 @@ sudo sed -ri \
   /etc/csaf/config.toml
 sudo cat /etc/csaf/config.toml
 sudo mkdir -p /usr/lib/cgi-bin/
-sudo cp "csaf-${csaf_version}-gnulinux-amd64/bin-linux-amd64/csaf_provider" /usr/lib/cgi-bin/csaf_provider.go
+sudo cp "csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_provider" /usr/lib/cgi-bin/csaf_provider.go
 curl -f http://127.0.0.1/cgi-bin/csaf_provider.go/api/create  -H 'X-Csaf-Provider-Auth: $2a$10$QL0Qy7CeOSdWDrdw6huw0uFk2szqxMssoihVn64BbZEPzqXwPThgu'
 # has no proper exit codes currently: https://github.com/gocsaf/csaf/issues/669
-# "./csaf-${csaf_version}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
+# "./csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
 
-pushd "csaf-validator-service-${secvisogram_version}" || exit
+pushd "csaf-validator-service-$secvisogram_version" || exit
 npm ci
 nohup npm run dev < /dev/null &> secvisogram.log &
 secvisogram_pid=$!
@@ -151,7 +184,7 @@ find "./source/${source_csaf_documents}" -type f -name '*.json' -print0 | while 
   echo "Uploading $file"
   # we cannot quote around the parameter expansion of openpgp_use_signatures as then csaf_upload would get an empty string as parameter if openpgp_use_signatures is not set
   # shellcheck disable=SC2046
-  "./csaf-${csaf_version}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" \
+  "./csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_uploader" \
     --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password \
     "$file" $( [[ "${openpgp_use_signatures}" == "true" ]] && echo "--external_signed" )
 done
