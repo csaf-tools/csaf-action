@@ -15,42 +15,6 @@
                 }
               ]
             }
-          },
-          {
-            "title": "CSAF feed (TLP:GREEN)",
-            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/green/csaf-feed-tlp-green.json",
-            "categories": {
-              "category": [
-                {
-                  "scheme": "urn:ietf:params:rolie:category:information-type",
-                  "term": "csaf"
-                }
-              ]
-            }
-          },
-          {
-            "title": "CSAF feed (TLP:AMBER)",
-            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/amber/csaf-feed-tlp-amber.json",
-            "categories": {
-              "category": [
-                {
-                  "scheme": "urn:ietf:params:rolie:category:information-type",
-                  "term": "csaf"
-                }
-              ]
-            }
-          },
-          {
-            "title": "CSAF feed (TLP:RED)",
-            "href": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/red/csaf-feed-tlp-red.json",
-            "categories": {
-              "category": [
-                {
-                  "scheme": "urn:ietf:params:rolie:category:information-type",
-                  "term": "csaf"
-                }
-              ]
-            }
           }
         ]
       }

@@ -8,46 +8,22 @@
             "summary": "TLP:WHITE advisories",
             "tlp_label": "WHITE",
             "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/csaf-feed-tlp-white.json"
-          },
-          {
-            "summary": "TLP:GREEN advisories",
-            "tlp_label": "GREEN",
-            "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/green/csaf-feed-tlp-green.json"
-          },
-          {
-            "summary": "TLP:AMBER advisories",
-            "tlp_label": "AMBER",
-            "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/amber/csaf-feed-tlp-amber.json"
-          },
-          {
-            "summary": "TLP:RED advisories",
-            "tlp_label": "RED",
-            "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/red/csaf-feed-tlp-red.json"
           }
         ]
       }
     },
     {
       "directory_url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white"
-    },
-    {
-      "directory_url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/green"
-    },
-    {
-      "directory_url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/amber"
-    },
-    {
-      "directory_url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/red"
     }
   ],
-  "last_updated": "2025-11-05T14:03:48Z",
+  "last_updated": "2025-11-11T09:58:36Z",
   "list_on_CSAF_aggregators": true,
   "metadata_version": "2.0",
   "mirror_on_CSAF_aggregators": true,
   "public_openpgp_keys": [
     {
-      "fingerprint": "AF6C75E78F7E00E9D54C1E9D3171A6A4CFAF1098",
-      "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/openpgp/AF6C75E78F7E00E9D54C1E9D3171A6A4CFAF1098.asc"
+      "fingerprint": "19D94DAE0CB063750A533A8AD039390906C53174",
+      "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/openpgp/19D94DAE0CB063750A533A8AD039390906C53174.asc"
     }
   ],
   "publisher": {
