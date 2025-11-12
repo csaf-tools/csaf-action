@@ -167,9 +167,7 @@ sudo sed -ri \
 sudo cat /etc/csaf/config.toml
 sudo mkdir -p /usr/lib/cgi-bin/
 sudo cp "csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_provider" /usr/lib/cgi-bin/csaf_provider.go
-curl -f http://127.0.0.1/cgi-bin/csaf_provider.go/api/create  -H 'X-Csaf-Provider-Auth: $2a$10$QL0Qy7CeOSdWDrdw6huw0uFk2szqxMssoihVn64BbZEPzqXwPThgu'
-# has no proper exit codes currently: https://github.com/gocsaf/csaf/issues/669
-# "./csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
+"./csaf-$csaf_version-gnulinux-amd64/bin-linux-amd64/csaf_uploader" --action create --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password
 
 pushd "csaf-validator-service-$secvisogram_version" || exit
 npm ci
