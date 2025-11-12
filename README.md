@@ -97,6 +97,7 @@ jobs:
 | `target_branch` | No | `gh-pages` | The target branch to push the resulting data to. |
 | `tlps` | No | `csaf,white` | Set the TLP levels allowed to be send with the upload request. Possible levels: "csaf", "white", "amber", "green", "red". The "csaf" entry lets the provider take the value from the CSAF document. |
 | `write_security` | No | `false` | Write a `CSAF:` entry into `security.txt`. Creates the file if it does not exist. |
+| `html_title` | No | `CSAF Advisories` | The title of the HTML pages, if `generate_index_files` is active. |
 
 ### OpenPGP signatures
 

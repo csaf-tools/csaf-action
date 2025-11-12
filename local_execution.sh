@@ -23,6 +23,7 @@ generate_index_files="false"
 target_branch="gh-pages"
 tlps="csaf,white"
 write_security="false"
+html_title="CSAF Advisories"
 
 cd "${HOME}/source" || exit
 # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
@@ -192,8 +193,8 @@ done
 
 tree_version=$(tree --version | grep -Eo 'v[0-9.]+')
 tree_outro_filename=$(mktemp)
-sed "s/TREE_VERSION_NUMBER/${tree_version}/" ${HOME}/tree-outro-template.html > "${tree_outro_filename}"
+sed "s/TREE_VERSION_NUMBER/${tree_version}/" "${HOME}/tree-outro-template.html" > "${tree_outro_filename}"
 pushd "${HOME}/target" || exit
-generate_index_files=${generate_index_files} tree_outro_filename=${tree_outro_filename} "${HOME}/pages.sh"
+generate_index_files="${generate_index_files}" tree_outro_filename="${tree_outro_filename}" html_title="${html_title}" "${HOME}/pages.sh"
 popd || exit
 

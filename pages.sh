@@ -29,7 +29,7 @@ if [[ "${generate_index_files:-false}" == "true" ]]; then
         echo "$dirname"
         pushd "$dirname" || exit
         # tree version 2.1.1 (Ubuntu 24.04) requires -H '.', tree version 2.2.1 requires -H ''
-        tree -a -I .git -I index.html -I .nojekyll -T "CSAF Advisories" --metafirst -h --du -F -D -L 1 -H '.' --houtro="${tree_outro_filename:-/dev/null}" -o index.html
+        tree -a -I .git -I index.html -I .nojekyll -T "${html_title:-CSAF Advisories}" --metafirst -h --du -F -D -L 1 -H '.' --houtro="${tree_outro_filename:-/dev/null}" -o index.html
         popd || exit
     done
 fi

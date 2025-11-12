@@ -78,6 +78,10 @@ inputs:
     description: Write a `CSAF:` entry into `security.txt`. Creates the file if it does not exist.
     default: false
     required: false
+  html_title:
+    description: The title of the HTML pages, if generate_index_files is active.
+    default: CSAF Advisories
+    required: false
 
 runs:
   using: composite
@@ -300,9 +304,9 @@ runs:
 
         tree_version=$(tree --version | grep -Eo 'v[0-9.]+')
         tree_outro_filename=$(mktemp)
-        sed "s/TREE_VERSION_NUMBER/${tree_version}/" ${{ github.action_path }}/tree-outro-template.html > "${tree_outro_filename}"
+        sed "s/TREE_VERSION_NUMBER/${tree_version}/" "${{ github.action_path }}/tree-outro-template.html" > "${tree_outro_filename}"
         pushd "${GITHUB_WORKSPACE}/target" || exit
-        generate_index_files=${{ inputs.generate_index_files }} tree_outro_filename=${tree_outro_filename} "${{ github.action_path }}/pages.sh"
+        generate_index_files="${{ inputs.generate_index_files }}" tree_outro_filename="${tree_outro_filename}" html_title="${{ inputs.html_title }}" "${{ github.action_path }}/pages.sh"
         popd || exit
 
     - name: Commit changes
