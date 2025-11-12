@@ -23,7 +23,7 @@ generate_index_files="false"
 target_branch="gh-pages"
 tlps="csaf,white"
 
-cd "./source" || exit
+cd "${HOME}/source" || exit
 # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
 git config --global user.name "github-actions[bot]"
 git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -51,8 +51,8 @@ DEBIAN_FRONTEND=noninteractive sudo -E apt-get update -qq
 # npm and hunspell for secvisogram, tree for pages.sh
 DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y nginx fcgiwrap npm hunspell wait-for-it tree
 
-sudo cp "./nginx/fcgiwrap.conf" /etc/nginx/fcgiwrap.conf
-sudo cp "./nginx/default.conf" /etc/nginx/sites-enabled/default
+sudo cp "${HOME}/nginx/fcgiwrap.conf" /etc/nginx/fcgiwrap.conf
+sudo cp "${HOME}/nginx/default.conf" /etc/nginx/sites-enabled/default
 sudo systemctl start fcgiwrap.service
 sudo systemctl start fcgiwrap.socket
 sudo systemctl reload-or-restart nginx.service
@@ -133,10 +133,10 @@ fi
 set -x
 # for validations.db
 sudo mkdir -p /var/lib/csaf/
-sudo cp "./csaf_provider/config.toml" /etc/csaf/config.toml
+sudo cp "${HOME}/csaf_provider/config.toml" /etc/csaf/config.toml
 sudo chgrp www-data /etc/csaf/config.toml
 sudo chmod g+r,o-rwx /etc/csaf/config.toml
-web_folder=$(readlink -f "./target")
+web_folder=$(readlink -f "${HOME}/target")
 internal_output=$(mktemp -d)
 mkdir -p "$web_folder"
 # remove all previous existing data, prepare for a new csaf_provider structure
@@ -178,7 +178,7 @@ echo $secvisogram_pid > secvisogram.pid
 wait-for-it localhost:8082
 
 set -x
-find "./source/${source_csaf_documents}" -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
+find "${HOME}/source/${source_csaf_documents}" -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
   echo "Uploading $file"
   # we cannot quote around the parameter expansion of openpgp_use_signatures as then csaf_upload would get an empty string as parameter if openpgp_use_signatures is not set
   # shellcheck disable=SC2046
@@ -190,8 +190,8 @@ done
 
 tree_version=$(tree --version | grep -Eo 'v[0-9.]+')
 tree_outro_filename=$(mktemp)
-sed "s/TREE_VERSION_NUMBER/${tree_version}/" ./tree-outro-template.html > "${tree_outro_filename}"
-pushd "./target" || exit
-generate_index_files=${generate_index_files} tree_outro_filename=${tree_outro_filename} "./pages.sh"
+sed "s/TREE_VERSION_NUMBER/${tree_version}/" ${HOME}/tree-outro-template.html > "${tree_outro_filename}"
+pushd "${HOME}/target" || exit
+generate_index_files=${generate_index_files} tree_outro_filename=${tree_outro_filename} "${HOME}/pages.sh"
 popd || exit
 
