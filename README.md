@@ -96,6 +96,7 @@ jobs:
 | `generate_index_files` | No | `false` | Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly. |
 | `target_branch` | No | `gh-pages` | The target branch to push the resulting data to. |
 | `tlps` | No | `csaf,white` | Set the TLP levels allowed to be send with the upload request. Possible levels: "csaf", "white", "amber", "green", "red". The "csaf" entry lets the provider take the value from the CSAF document. |
+| `write_security` | No | `false` | Write a `CSAF:` entry into `security.txt`. Creates the file if it does not exist. |
 
 ### OpenPGP signatures
 

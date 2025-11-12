@@ -74,6 +74,10 @@ inputs:
     # this is not a JSON-like string as using that would cause problems with GitHub's Action parser
     default: csaf,white
     required: false
+  write_security:
+    description: Write a `CSAF:` entry into `security.txt`. Creates the file if it does not exist.
+    default: false
+    required: false
 
 runs:
   using: composite
@@ -262,6 +266,7 @@ runs:
           -e "s#^\#?canonical_url_prefix *=.*#canonical_url_prefix = \"${{ steps.pagesurl.outputs.url }}\"#" \
           -e "s/^#?upload_signature *?=.*/upload_signature = ${{ inputs.openpgp_use_signatures }}/" \
           -e "s/^#?tlps *?=.*/tlps = ${json_tlps}/" \
+          -e "s/^#?write_security *?=.*/write_security = ${{ inputs.write_security }}/" \
           /etc/csaf/config.toml
         sudo cat /etc/csaf/config.toml
         sudo mkdir -p /usr/lib/cgi-bin/

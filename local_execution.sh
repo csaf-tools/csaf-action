@@ -22,6 +22,7 @@ openpgp_public_key=""
 generate_index_files="false"
 target_branch="gh-pages"
 tlps="csaf,white"
+write_security="false"
 
 cd "${HOME}/source" || exit
 # inspired by https://github.com/ChristopherDavenport/create-ghpages-ifnotexists/blob/main/action.yml but with different committer
@@ -163,6 +164,7 @@ sudo sed -ri \
   -e "s#^\#?canonical_url_prefix *=.*#canonical_url_prefix = \"${outputs_url}\"#" \
   -e "s/^#?upload_signature *?=.*/upload_signature = ${openpgp_use_signatures}/" \
   -e "s/^#?tlps *?=.*/tlps = ${json_tlps}/" \
+  -e "s/^#?write_security *?=.*/write_security = ${write_security}/" \
   /etc/csaf/config.toml
 sudo cat /etc/csaf/config.toml
 sudo mkdir -p /usr/lib/cgi-bin/
