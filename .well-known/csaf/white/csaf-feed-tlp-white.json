@@ -18,11 +18,14 @@
         "term": "csaf"
       }
     ],
-    "updated": "2025-11-12T09:56:33Z",
+    "updated": "2026-02-12T15:23:27Z",
     "entry": [
       {
+        "content": {
+          "type": "application/json",
+          "src": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json"
+        },
         "id": "example-company-2025-0001",
-        "title": "This is just a valid CSAF document",
         "link": [
           {
             "rel": "self",
@@ -42,11 +45,8 @@
           }
         ],
         "published": "2025-07-31T12:00:00Z",
+        "title": "This is just a valid CSAF document",
         "updated": "2025-07-31T12:00:00Z",
-        "content": {
-          "type": "application/json",
-          "src": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white/2025/example-company-2025-0001.json"
-        },
         "format": {
           "schema": "https://docs.oasis-open.org/csaf/csaf/v2.0/csaf_json_schema.json",
           "version": "2.0"
