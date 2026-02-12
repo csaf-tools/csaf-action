@@ -49,6 +49,7 @@ on:
       - main
     paths:
       - 'advisories/**.json'
+      - 'advisories/**.asc'
   workflow_dispatch:
 
 permissions:
