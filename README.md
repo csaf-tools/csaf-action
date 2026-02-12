@@ -106,7 +106,7 @@ jobs:
 
 For each advisory in `source_csaf_documents`, place an OpenPGP signature:
 ```bash
-gpg --armor --detach-sign --local-user KEYID --sign test/inputs/example-company-2025-0001.json
+gpg --armor --detach-sign --local-user KEYID test/inputs/example-company-2025-0001.json
 ```
 And set these two parameters. `openpgp_public_key` must be the one public key that you are using for the signatures.
 
