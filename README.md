@@ -158,8 +158,6 @@ When the GitHub Pages URL changes, the file `html/.well-known/csaf/provider-meta
 
 ## License
 
-**todo**
-
 ```
 SPDX-License-Identifier: Apache-2.0
 
