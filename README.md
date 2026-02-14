@@ -5,8 +5,8 @@ Publish your CSAF Advisories from a GitHub repository to GitHub Pages.
 
 <!--
  SPDX-License-Identifier: Apache-2.0
- SPDX-FileCopyrightText: 2025 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
- Software-Engineering: 2025 Intevation GmbH <https://intevation.de>
+ SPDX-FileCopyrightText: 2025-2026 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
+ Software-Engineering: 2025-2026 Intevation GmbH <https://intevation.de>
 -->
 
 ## Development status
@@ -155,6 +155,19 @@ This mode is useful for starting from scratch, demo and test purposes.
 ### Changing the URL
 
 When the GitHub Pages URL changes, the file `html/.well-known/csaf/provider-metadata.json` in branch `gh-pages` must be delete to take effect.
+
+### TLP levels
+
+When using this action to deploy data from public repositories or to websites with unrestricted access, publishing CSAF documents with a TLP level other than *WHITE* is generally not meaningful.
+Accordingly, the action only permits CSAF documents classified as *TLP:WHITE* by default, rejecting documents classified as *TLP:GREEN*, *TLP:AMBER*, or *TLP:RED*.
+
+For more information on TLP levels, see [first.org/tlp](https://www.first.org/tlp/).
+
+#### Changing to more restrictive settings
+
+If the `tlp` parameter was previously configured to permit non-WHITE levels, the CSAF tools used by this action will have created directory structures and files for those levels.
+When switching to a more restrictive TLP setting, these files must be removed manually. The action does not delete existing files, as doing so could interfere with other published content.
+
 
 ## License
 
