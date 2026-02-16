@@ -16,14 +16,14 @@
       "directory_url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/white"
     }
   ],
-  "last_updated": "2026-02-16T16:52:48Z",
+  "last_updated": "2026-02-16T16:55:27Z",
   "list_on_CSAF_aggregators": true,
   "metadata_version": "2.0",
   "mirror_on_CSAF_aggregators": true,
   "public_openpgp_keys": [
     {
-      "fingerprint": "AF20577F3A61E6F92D3B9F6C2ED4520E3A69BCF9",
-      "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/openpgp/AF20577F3A61E6F92D3B9F6C2ED4520E3A69BCF9.asc"
+      "fingerprint": "09EEAA6969F2E54677AECD4765DF1FD136DF4510",
+      "url": "https://csaf-tools.github.io/csaf-action/.well-known/csaf/openpgp/09EEAA6969F2E54677AECD4765DF1FD136DF4510.asc"
     }
   ],
   "publisher": {
