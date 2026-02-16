@@ -156,6 +156,12 @@ This mode is useful for starting from scratch, demo and test purposes.
 
 When the GitHub Pages URL changes, the file `html/.well-known/csaf/provider-metadata.json` in branch `gh-pages` must be delete to take effect.
 
+## Development
+
+### Action Tests
+
+The tests for this Action are in [csaf-tools/csaf-action-test](https://github.com/csaf-tools/csaf-action-test/).
+
 ## License
 
 **todo**
