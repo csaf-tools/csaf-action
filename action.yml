@@ -87,7 +87,7 @@ runs:
   using: composite
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         sparse-checkout: ${{ inputs.source_csaf_documents }}
         path: source
@@ -113,7 +113,7 @@ runs:
         json_tlps=$(echo ${{ inputs.tlps }} | jq -cR 'split(",")')
 
     - name: Checkout target branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         ref: "${{ inputs.target_branch }}"
         # make a checkout in different directory. Not possible in parallel directory (permissions). A subdirectory may collide with existing directory names
@@ -311,7 +311,7 @@ runs:
 
     - name: Commit changes
       # Use https://github.com/stefanzweifel/git-auto-commit-action for commit and push
-      uses: stefanzweifel/git-auto-commit-action@v6
+      uses: stefanzweifel/git-auto-commit-action@v7
       with:
         commit_message: Update CSAF advisories
         repository: target
