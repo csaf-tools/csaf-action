@@ -94,6 +94,7 @@ jobs:
 | `openpgp_key_length` | No | `4096` | If the OpenPGP is to be generated on the fly, this is the key length in bits. |
 | `openpgp_secret_key` | No | - | The armored OpenPGP secret key, provided as GitHub secret. |
 | `openpgp_public_key` | No | - | The armored OpenPGP public key, provided as string or GitHub secret. |
+| `openpgp_passphrase` | No | - | The passphrase to unlock the OpenPGP secret key, provided as GitHub secret. |
 | `generate_index_files` | No | `false` | Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly. |
 | `target_branch` | No | `gh-pages` | The target branch to push the resulting data to. |
 | `tlps` | No | `csaf,white` | Set the TLP levels allowed to be send with the upload request. Possible levels: "csaf", "white", "amber", "green", "red". The "csaf" entry lets the provider take the value from the CSAF document. |
@@ -138,11 +139,25 @@ with:
   openpgp_public_key: ${{ secrets.CSAF_OPENPGP_PUBLIC_KEY }}
 ```
 
+If your private key is protected with a passphrase, add it as a third secret (e.g. `CSAF_OPENPGP_PASSPHRASE`) and pass it via `openpgp_passphrase`:
+
+```yaml
+with:
+  openpgp_use_signatures: false
+  openpgp_secret_key: ${{ secrets.CSAF_OPENPGP_SECRET_KEY }}
+  openpgp_public_key: ${{ secrets.CSAF_OPENPGP_PUBLIC_KEY }}
+  openpgp_passphrase: ${{ secrets.CSAF_OPENPGP_PASSPHRASE }}
+```
+
 ##### Security
 
 As the OpenPGP key needs to be provided unencrypted at GitHub, keep in mind that GitHub/Microsoft can read and use it.
 Please create a specific OpenPGP key for this purpose, do not reuse any other existing key and prepare for a potential confidentiality breach.
 Keep the revocation certificate ready in case you need to revoke the key.
+
+Providing a passphrase for the Open PGP private key does not improve security.
+This option exists purely for tools that always export private keys with a passphrase.
+It removes the need to strip the passphrase from it manually before uploading the key as a secret.
 
 #### Generating key on the fly
 

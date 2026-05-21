@@ -61,6 +61,9 @@ inputs:
   openpgp_public_key:
     description: The armored OpenPGP public key, provided as GitHub secret
     required: false
+  openpgp_passphrase:
+    description: The passphrase to unlock the OpenPGP secret key, provided as GitHub secret
+    required: false
   generate_index_files:
     description: Generate index.html files in .well-known/csaf/ for easier navigation in the browser. Otherwise GitHub will give 404s when accessing the directories directly.
     default: false
@@ -87,7 +90,7 @@ runs:
   using: composite
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         sparse-checkout: ${{ inputs.source_csaf_documents }}
         path: source
@@ -113,7 +116,7 @@ runs:
         json_tlps=$(echo ${{ inputs.tlps }} | jq -cR 'split(",")')
 
     - name: Checkout target branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         ref: "${{ inputs.target_branch }}"
         # make a checkout in different directory. Not possible in parallel directory (permissions). A subdirectory may collide with existing directory names
@@ -292,14 +295,24 @@ runs:
       shell: bash
       run: |
         set -x
-        find "$GITHUB_WORKSPACE/source/${{ inputs.source_csaf_documents }}" -type f -name '*.json' -print0 | while IFS= read -r -d $'\0' file; do
+        uploader_config_args=()
+        if [[ -n "${{ inputs.openpgp_passphrase }}" ]]; then
+          # Write passphrase to config file so it is not exposed on the command line or in logs
+          uploader_config=$(mktemp --suffix=.toml)
+          # use printf to prevent interpretation of characters in the passphrase
+          printf 'passphrase = "%s"\n' "${{ inputs.openpgp_passphrase }}" > "$uploader_config"
+          chmod 600 "$uploader_config"
+          uploader_config_args=(--config "$uploader_config")
+        fi
+        while IFS= read -r -d $'\0' file; do
           echo "Uploading $file"
           # we cannot quote around the parameter expansion of openpgp_use_signatures as then csaf_upload would get an empty string as parameter if openpgp_use_signatures is not set
           # shellcheck disable=SC2046
           "./csaf-${{ env.csaf_version }}-gnulinux-amd64/bin-linux-amd64/csaf_uploader" \
+            "${uploader_config_args[@]}" \
             --action upload --url http://127.0.0.1/cgi-bin/csaf_provider.go --password password \
             "$file" $( [[ "${{ inputs.openpgp_use_signatures }}" == "true" ]] && echo "--external_signed" )
-        done
+        done < <(find "$GITHUB_WORKSPACE/source/${{ inputs.source_csaf_documents }}" -type f -name '*.json' -print0)
 
 
         tree_version=$(tree --version | grep -Eo 'v[0-9.]+')
@@ -311,7 +324,7 @@ runs:
 
     - name: Commit changes
       # Use https://github.com/stefanzweifel/git-auto-commit-action for commit and push
-      uses: stefanzweifel/git-auto-commit-action@v6
+      uses: stefanzweifel/git-auto-commit-action@v7
       with:
         commit_message: Update CSAF advisories
         repository: target
