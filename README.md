@@ -183,6 +183,11 @@ For more information on TLP levels, see [first.org/tlp](https://www.first.org/tl
 If the `tlp` parameter was previously configured to permit non-WHITE levels, the CSAF tools used by this action will have created directory structures and files for those levels.
 When switching to a more restrictive TLP setting, these files must be removed manually. The action does not delete existing files, as doing so could interfere with other published content.
 
+## Development
+
+### Action Tests
+
+The tests for this Action are in [csaf-tools/csaf-action-test](https://github.com/csaf-tools/csaf-action-test/).
 
 ## License
 
