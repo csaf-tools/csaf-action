@@ -323,6 +323,16 @@ runs:
         generate_index_files="${{ inputs.generate_index_files }}" tree_outro_filename="${tree_outro_filename}" html_title="${{ inputs.html_title }}" "${{ github.action_path }}/pages.sh"
         popd || exit
 
+    - name: Replace any remaining symlinks by copies
+      shell: bash
+      run: |
+        set -x
+        while IFS= read -r -d $'\0' linkname; do
+            destination=$(readlink -e "$linkname")
+            sudo rm "$linkname"
+            sudo mv "$destination" "$linkname"
+        done < <(find target -type l -print0)
+
     - name: Commit changes
       # Use https://github.com/stefanzweifel/git-auto-commit-action for commit and push
       uses: stefanzweifel/git-auto-commit-action@v7
