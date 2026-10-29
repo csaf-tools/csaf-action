@@ -85,6 +85,9 @@ inputs:
     description: The title of the HTML pages, if generate_index_files is active.
     default: CSAF Advisories
     required: false
+  canonical_url_prefix:
+    description: The base URL, e.g. `https://<owner>.github.io`. If left unset, the URL is the default GitHub Pages URL. See section *Publishing to a different URL* in the README below.
+    required: false
 
 runs:
   using: composite
@@ -122,13 +125,18 @@ runs:
         # make a checkout in different directory. Not possible in parallel directory (permissions). A subdirectory may collide with existing directory names
         path: target
 
-    - name: Get GitHub Pages URL
+    - name: Determine URL prefix
       id: pagesurl
       env:
         GH_TOKEN: ${{ github.token }}
+        CANONICAL_URL_PREFIX: ${{ inputs.canonical_url_prefix }}
       shell: bash
       run: |
-        url=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
+        if [[ -n "$CANONICAL_URL_PREFIX" ]]; then
+          url="$CANONICAL_URL_PREFIX"
+        else
+          url=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
+        fi
         echo "$url"
         # remove the trailing slash to prevent urls containing '//' in provider-metadata.json
         echo "url=${url%/}" >> "$GITHUB_OUTPUT"
