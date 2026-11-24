@@ -86,7 +86,7 @@ inputs:
     default: CSAF Advisories
     required: false
   canonical_url_prefix:
-    description: The base URL, e.g. `https://<owner>.github.io`. If left unset, the URL is the default GitHub Pages URL. See section *Publishing to a different URL* in the README below.
+    description: Base URL under which the .well-known/csaf/ tree is served. If left unset, the auto-detected GitHub Pages URL is used. See section *Publishing to a different URL* in the README.
     required: false
 
 runs:
